@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "MCStorage",
+  "sourceName": "@tokenysolutions/t-rex/contracts/compliance/modular/MCStorage.sol",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220ba63078208d18678f9eef20e00dc379082d1ef5eef981f22d10d3f60f67c66a064736f6c63430008110033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220ba63078208d18678f9eef20e00dc379082d1ef5eef981f22d10d3f60f67c66a064736f6c63430008110033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

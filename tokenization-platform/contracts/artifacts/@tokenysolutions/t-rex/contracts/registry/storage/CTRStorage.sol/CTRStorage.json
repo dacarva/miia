@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "CTRStorage",
+  "sourceName": "@tokenysolutions/t-rex/contracts/registry/storage/CTRStorage.sol",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220ba65df557999ec7eff646df5857e199173d9104de8528d0d0a00d7871c63f86464736f6c63430008110033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220ba65df557999ec7eff646df5857e199173d9104de8528d0d0a00d7871c63f86464736f6c63430008110033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

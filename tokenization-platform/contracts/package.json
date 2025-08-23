@@ -13,7 +13,9 @@
     "hardhat": "^2.22.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.0",
-    "@tokenysolutions/t-rex": "^4.0.0"
+    "@onchain-id/solidity": "^2.2.1",
+    "@openzeppelin/contracts": "4.8.3",
+    "@openzeppelin/contracts-upgradeable": "4.8.3",
+    "@tokenysolutions/t-rex": "^4.1.6"
   }
 }
