@@ -1,256 +1,200 @@
-# 🏠 Sistema de Clustering K-means para Datos Inmobiliarios
+# Proyecto de Clustering de Propiedades Inmobiliarias
 
-## 📋 Descripción General
+## 📋 Descripción del Proyecto
 
-Este proyecto implementa un sistema completo de análisis de clustering utilizando el algoritmo K-means para categorizar propiedades inmobiliarias basado en sus características. El sistema procesa datos en formato CSV, aplica técnicas de machine learning, y genera categorías inteligentes con visualizaciones detalladas.
+Este proyecto implementa un sistema de clustering utilizando el algoritmo K-Means para analizar y segmentar el mercado de propiedades inmobiliarias en Colombia. El sistema procesa datos de propiedades en venta, realiza limpieza de datos, identifica clusters naturales y genera análisis detallados con visualizaciones.
 
-## 🎯 Objetivo
+## 🎯 Objetivos
 
-Identificar y categorizar automáticamente propiedades inmobiliarias en grupos homogéneos basados en características como:
-- Valor de renta y venta
-- Área construida y total
-- Número de habitaciones y baños
-- Estrato socioeconómico
-- Ubicación geográfica
+- Identificar patrones en el mercado inmobiliario de venta
+- Segmentar propiedades en clusters homogéneos
+- Proporcionar insights para toma de decisiones
+- Generar visualizaciones comprensibles
+- Exportar resultados para análisis posteriores
 
-## 📊 Estructura del Proyecto
+## 🏗️ Arquitectura del Proyecto
 
 ```
 data/
-├── json2csv.py              # Conversor JSON Lines → CSV
-├── kmeans_clustering.py     # Script principal de clustering
-├── cluster_categories.py    # Analizador de categorías
-├── json_habi_data/
-│   ├── inmobiliario.json    # Datos originales (JSON Lines)
-│   ├── inmobiliario.csv     # Datos convertidos a CSV
-│   ├── inmobiliario_clustered.csv    # Datos con clusters
-│   └── inmobiliario_categorized.csv  # Datos con categorías
-└── plots/
-    ├── cluster_analysis.png           # Visualización de clusters
-    └── cluster_categories_analysis.png # Análisis de categorías
+├── cluster_data_optimized.py      # Script principal de clustering
+├── city_cluster_analysis.py       # Análisis de distribución geográfica
+├── cluster_analysis.md            # Análisis detallado de clusters
+├── clustered_inmobiliario.csv     # Datos originales con clusters
+├── cluster_centroids.csv          # Centroides de cada cluster
+├── city_cluster_analysis_report.csv # Reporte de análisis por ciudad
+└── plots/                         # Visualizaciones generadas
+    ├── elbow_method.png
+    ├── cluster_scatter.png
+    ├── rent_value_boxplot.png
+    └── city_analysis/
+        ├── top_cities.png
+        ├── city_cluster_heatmap.png
+        └── cluster_distribution_pie.png
 ```
 
-## 🛠️ Tecnologías Utilizadas
+## 📊 Datos Utilizados
 
-- **Python 3.12+**
-- **Pandas** - Procesamiento y manipulación de datos
-- **Scikit-learn** - Algoritmos de machine learning (K-means)
-- **NumPy** - Cálculos numéricos
-- **Matplotlib/Seaborn** - Visualizaciones
-- **PCA** - Reducción dimensional para visualización
+### Fuente de Datos
+- Archivo: `json_habi_data/inmobiliario.csv`
+- Total de registros originales: 190,000
+- Propiedades de venta analizadas: 361
 
-## 📈 Clusters Identificados
+### Características Principales
+1. **rent_value**: Valor de venta (filtrado > 100,000)
+2. **area**: Área total en m²
+3. **rooms**: Número de habitaciones
+4. **bathrooms**: Número de baños
+5. **business_type**: Tipo de negocio (filtrado por "venta")
 
-### 🔹 Cluster 0 (569 propiedades) - **Económico/Residencial Familiar**
-- **Valor renta promedio**: $22.3M
-- **Área promedio**: 1,014 m²
-- **Habitaciones**: 2.7 | **Baños**: 2.5 | **Estrato**: 4.6
-- **Ubicaciones principales**: Medellín, Pereira, Bogotá D.C.
-- **Tipos de propiedad**: Apartamento, Bodega, Casa
+## ⚙️ Instalación y Configuración
 
-### 🔹 Cluster 1 (1 propiedad) - **Premium/Lujo Comercial**
-- **Valor renta**: $12M
-- **Área**: 400 m²
-- **Tipo**: Local comercial en Bello
-- **Característica**: Valor excepcional único
+### Requisitos
+- Python 3.8+
+- pip (gestor de paquetes de Python)
 
-### 🔹 Cluster 2 (1 propiedad) - **Residencial Familiar Grande**
-- **Valor renta**: $10M
-- **Área**: 480,000 m² (¡Enorme!)
-- **Habitaciones**: 5 | **Baños**: 5
-- **Ubicación**: Bogotá D.C.
-- **Tipo**: Casa con amplísimo espacio
-
-### 🔹 Cluster 3 (62 propiedades) - **Económico/Residencial Costero**
-- **Valor renta promedio**: $19.5M
-- **Área promedio**: 451 m²
-- **Habitaciones**: 2.7 | **Baños**: 2.4 | **Estrato**: 4.6
-- **Ubicaciones principales**: Barranquilla, Cartagena, Santa Marta
-- **Característica**: Propiedades en zonas costeras
-
-### 🔹 Cluster 4 (268 propiedades) - **Residencial Familiar Premium**
-- **Valor renta promedio**: $12M
-- **Área promedio**: 677 m²
-- **Habitaciones**: 3.8 | **Baños**: 4.4 | **Estrato**: 5.6
-- **Ubicaciones principales**: Bogotá D.C., Medellín, Pereira
-- **Característica**: Estrato alto, amplias comodidades
-
-### 🔹 Cluster 5 (4 propiedades) - **Ultra Lujo/Residencial Exclusivo**
-- **Valor renta promedio**: $1,810M (¡Ultra premium!)
-- **Área promedio**: 1,053 m²
-- **Habitaciones**: 3.2 | **Baños**: 4.5 | **Estrato**: 4.3
-- **Ubicaciones principales**: Bogotá D.C., Sopetran
-- **Característica**: Propiedades de valor excepcional
-
-## 🎨 Criterios de Categorización
-
-El sistema utiliza múltiples criterios para asignar categorías:
-
-### 💰 Por Valor de Renta
-- **Premium_Lujo**: ≥ $1,000M
-- **Alto_Valor**: $50M - $1,000M
-- **Medio_Alto**: $20M - $50M + estrato ≥5
-- **Medio**: $10M - $20M + estrato ≥4
-- **Económico**: $1M - $10M
-
-### 🏠 Por Características Físicas
-- **Residencial_Familiar**: ≥3 habitaciones + ≥100m²
-- **Estudio_Eficiencia**: ≤1 habitación + <60m²
-- **Comercial**: Locales, bodegas, oficinas
-
-### 📍 Por Ubicación y Demografía
-- Análisis de ciudades principales
-- Distribución por estratos
-- Concentración geográfica
-
-## 🚀 Cómo Usar el Sistema
-
-### 1. Conversión de Datos
+### Instalación de Dependencias
 ```bash
-python json2csv.py
+pip install pandas numpy matplotlib seaborn scikit-learn
 ```
 
-### 2. Ejecutar Clustering
+### Ejecución del Proyecto
 ```bash
-python kmeans_clustering.py
+# Clustering principal
+python cluster_data_optimized.py
+
+# Análisis de distribución por ciudades
+python city_cluster_analysis.py
 ```
 
-### 3. Análisis de Categorías
-```bash
-python cluster_categories.py
-```
+## 🔧 Funcionalidades Implementadas
 
-### 4. Resultados Generados
-- **Clusters**: 6 categorías identificadas automáticamente
-- **Visualizaciones**: Gráficos de análisis y distribución
-- **Archivos CSV**: Datos enriquecidos con clusters y categorías
+### 1. Limpieza de Datos
+- Filtrado por `business_type = "venta"`
+- Eliminación de valores NaN en rent_value
+- Filtrado por `rent_value > 100,000`
+- Eliminación de outliers (3 desviaciones estándar)
 
-## 📊 Métricas de Calidad
+### 2. Preprocesamiento
+- Conversión de tipos de datos
+- Imputación de valores faltantes (mediana)
+- Escalado estándar de características
 
-- **Total de propiedades analizadas**: 905
-- **Clusters identificados**: 6
-- **Preprocesamiento**: Limpieza automática de datos
-- **Escalado**: Normalización StandardScaler
-- **Método de selección**: Análisis del codo (Elbow Method)
+### 3. Clustering K-Means
+- Método del codo para determinar clusters óptimos
+- 5 clusters identificados automáticamente
+- Random state fijo para reproducibilidad
 
-## 🎯 Aplicaciones Prácticas
+### 4. Análisis y Visualización
+- Estadísticas por cluster
+- Centroides en escala original
+- Visualizaciones de dispersión y distribución
+- Análisis geográfico por ciudades
 
-### Para Inmobiliarias
-- Segmentación automática de portafolio
-- Estrategias de precios por categoría
-- Identificación de nichos de mercado
+## 📈 Resultados Obtenidos
 
-### Para Inversores
-- Detección de oportunidades de inversión
-- Análisis comparativo de propiedades
-- Evaluación de tendencias de mercado
+### Clusters Identificados
+| Cluster | Propiedades | % Total | Valor Promedio | Área Promedio | Descripción |
+|---------|-------------|---------|----------------|---------------|-------------|
+| 0 | 102 | 28.3% | $8.7M | 71 m² | Económicas Compactas |
+| 1 | 104 | 28.8% | $14.0M | 365 m² | Premium Completas |
+| 2 | 5 | 1.4% | $1.37B | 187 m² | Ultra Premium |
+| 3 | 6 | 1.7% | $9.6M | 2,708 m² | Gran Superficie |
+| 4 | 144 | 39.9% | $18.2M | 107 m² | Estándar Intermedias |
 
-### Para Desarrolladores
-- Estudio de mercado para nuevos proyectos
-- Análisis de demanda por categorías
-- Optimización de diseños según segmentos
-
-## 🔮 Características Técnicas Avanzadas
-
-### Preprocesamiento Inteligente
-- Manejo automático de valores faltantes (imputación por mediana)
-- Detección y conversión de tipos de datos
-- Escalado robusto con StandardScaler
-
-### Algoritmo K-means Optimizado
-- **Inicialización**: K-means++ para mejores resultados
-- **Iteraciones**: 300 máximo por convergencia
-- **Random state**: 42 para reproducibilidad
-- **Múltiples inicializaciones**: n_init=20
-
-### Análisis Dimensional
-- **PCA**: Reducción a 2 componentes para visualización
-- **Método del codo**: Determinación automática de clusters óptimos
-- **Validación**: Análisis de inercia y silueta
-
-## 📈 Insights Obtenidos
-
-1. **Distribución Geográfica**: Clusters muestran patrones regionales claros
-2. **Estratificación**: Relación directa entre estrato y valor de propiedades
-3. **Tipología**: Diversidad de tipos de propiedad bien categorizada
-4. **Valores Extremos**: Detección automática de propiedades únicas/excepcionales
+### Distribución Geográfica
+**Top 5 Ciudades:**
+1. **Bogotá D.C.**: 42 propiedades (11.6%)
+2. **Medellín**: 37 propiedades (10.2%)
+3. **Barranquilla**: 29 propiedades (8.0%)
+4. **Pereira**: 22 propiedades (6.1%)
+5. **Cartagena**: 22 propiedades (6.1%)
 
 ## 🎨 Visualizaciones Generadas
 
-### cluster_analysis.png
-- Scatter plot de clusters en espacio PCA
-- Gráfico del método del codo para determinar K óptimo
-- Representación visual de la distribución de clusters
+### Gráficas Principales
+1. **Método del Codo**: Determina número óptimo de clusters
+2. **Scatter Plot**: Valor vs Área por cluster
+3. **Boxplot**: Distribución de valores por cluster
+4. **Heatmap**: Distribución de clusters por ciudad
+5. **Gráfico de Torta**: Distribución general de clusters
 
-### cluster_categories_analysis.png
-- Distribución de propiedades por cluster
-- Valor de renta promedio por categoría
-- Área promedio por cluster
-- Estrato socioeconómico promedio
+## 📋 Archivos de Salida
 
-## 🔄 Flujo de Procesamiento
+### Datos
+- `clustered_inmobiliario.csv`: Datos originales + asignación de cluster
+- `cluster_centroids.csv`: Centroides de cada cluster
+- `city_cluster_analysis_report.csv`: Estadísticas por ciudad
 
-1. **Carga de datos** → CSV con 27 características
-2. **Preprocesamiento** → Limpieza y escalado
-3. **Determinación de K** → Método del codo
-4. **Clustering** → K-means con K óptimo
-5. **Análisis** → Estadísticas por cluster
-6. **Categorización** → Asignación inteligente de categorías
-7. **Visualización** → Gráficos y reportes
-8. **Exportación** → Datos enriquecidos
+### Análisis
+- `cluster_analysis.md`: Análisis detallado de clusters
+- `PROYECTO_CLUSTERING_RESUMEN.md`: Resumen ejecutivo completo
 
-## 📋 Requisitos del Sistema
+## 🚀 Uso del Sistema
 
-### Dependencias Python
+### Para Desarrolladores
 ```python
-pandas>=1.5.0
-scikit-learn>=1.2.0
-matplotlib>=3.7.0
-seaborn>=0.12.0
-numpy>=1.24.0
+from cluster_data_optimized import load_and_clean_data, prepare_features
+
+# Cargar y limpiar datos
+df = load_and_clean_data('json_habi_data/inmobiliario.csv')
+
+# Preparar características
+X_scaled, features, scaler = prepare_features(df)
 ```
 
-### Recursos Computacionales
-- **RAM**: ≥4GB recomendado
-- **Procesador**: Multi-core para optimización
-- **Almacenamiento**: Espacio para datasets y visualizaciones
+### Para Analistas
+Los archivos CSV generados pueden ser importados directamente en:
+- Excel / Google Sheets
+- Tableau / Power BI
+- Pandas para análisis adicionales
 
-## 🚦 Próximos Pasos y Mejoras
+## 🔍 Insights de Negocio
+
+### Segmentos Identificados
+1. **Mercado Masivo (68.2%)**: Clusters 0 y 4 - Propiedades accesibles
+2. **Segmento Premium (28.8%)**: Cluster 1 - Propiedades completas
+3. **Nicho Especializado (3.1%)**: Clusters 2 y 3 - Propiedades únicas
+
+### Recomendaciones
+- **Inversores**: Enfocarse en Cluster 4 (estabilidad) y Cluster 0 (alto potencial)
+- **Desarrolladores**: Desarrollar propiedades entre Cluster 0 y Cluster 4
+- **Data Quality**: Validar valores extremos en Cluster 2
+
+## 🛠️ Tecnologías Utilizadas
+
+- **Python**: Lenguaje principal
+- **Pandas**: Manipulación de datos
+- **Scikit-learn**: Machine Learning (K-Means)
+- **Matplotlib/Seaborn**: Visualizaciones
+- **NumPy**: Cálculos numéricos
+
+## 📝 Próximos Pasos
 
 ### Mejoras Técnicas
-- [ ] Implementar DBSCAN para detección de outliers
-- [ ] Añadir análisis de silueta para validación
-- [ ] Incorporar clustering jerárquico
-- [ ] Optimizar para datasets más grandes
+1. Incorporar más características (ubicación, amenities)
+2. Implementar validación cruzada
+3. Agregar análisis temporal
+4. Optimizar performance para datasets grandes
 
-### Funcionalidades Adicionales
-- [ ] API REST para clustering en tiempo real
-- [ ] Dashboard interactivo con Streamlit
-- [ ] Integración con bases de datos
-- [ ] Análisis temporal de tendencias
+### Análisis Business
+1. Desarrollar modelo de pricing predictivo
+2. Analizar tendencias temporales por cluster
+3. Comparar mercado de venta vs arriendo
+4. Integrar datos externos (económicos, demográficos)
 
-### Análisis Avanzado
-- [ ] Segmentación por micro-mercados
-- [ ] Predicción de precios por machine learning
-- [ ] Análisis de sentimiento en descripciones
-- [ ] Integración con datos macroeconómicos
+## 📞 Soporte y Contacto
 
-## 📞 Soporte y Contribuciones
+Para preguntas o issues relacionados con este proyecto, por favor revisar:
+1. Documentación en `cluster_analysis.md`
+2. Código fuente comentado
+3. Archivos de ejemplo generados
 
-Este sistema es modular y extensible. Para contribuciones:
-1. Sigue la estructura de proyectos existente
-2. Mantén consistencia en el preprocesamiento
-3. Documenta nuevas funcionalidades
-4. Incluye tests para validación
+## 📄 Licencia
 
-## 📊 Estadísticas Finales
-
-- **✅ Procesamiento completado**: 100%
-- **📈 Clusters identificados**: 6 categorías
-- **🏠 Propiedades analizadas**: 905
-- **🎯 Precisión**: Segmentación coherente con datos reales
-- **⚡ Performance**: Procesamiento eficiente de datos
+Este proyecto es para fines educativos y de análisis. Los datos deben ser utilizados respetando las políticas de privacidad y términos de uso correspondientes.
 
 ---
 
-**✨ Sistema desarrollado para análisis inteligente de mercado inmobiliario ✨**
+**Última actualización**: 2024  
+**Versión**: 1.0  
+**Estado**: ✅ Completado
