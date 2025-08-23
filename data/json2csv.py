@@ -1,6 +1,6 @@
+import os
 import json
 import pandas as pd
-import os
 
 def json_to_csv(json_file_path, csv_file_path=None):
     """
@@ -14,15 +14,12 @@ def json_to_csv(json_file_path, csv_file_path=None):
     Returns:
         str: Ruta del archivo CSV generado
     """
-    # Si no se especifica ruta de salida, usar misma ubicación con extensión .csv
     if csv_file_path is None:
         csv_file_path = os.path.splitext(json_file_path)[0] + '.csv'
 
     try:
-        # Leer el archivo JSON Lines
         print(f"Leyendo archivo JSON: {json_file_path}")
 
-        # Leer línea por línea y cargar cada objeto JSON
         data = []
         with open(json_file_path, 'r', encoding='utf-8') as file:
             for line_number, line in enumerate(file, 1):
@@ -35,29 +32,22 @@ def json_to_csv(json_file_path, csv_file_path=None):
                         print(f"Error en línea {line_number}: {e}")
                         print(f"Contenido de la línea: {line}")
 
-        # Convertir a DataFrame de pandas
         df = pd.DataFrame(data)
 
-        # Aplicar filtros y transformaciones
         print("Aplicando filtros y transformaciones...")
 
-        # Filtrar business_type que contengan "venta" (case insensitive)
         if 'business_type' in df.columns:
             df = df[df['business_type'].str.contains('venta', case=False, na=False)]
             print(f"Filtrado por business_type 'venta': {len(df)} registros")
 
-        # Procesar rent_value: convertir strings a float y limpiar valores
         if 'rent_value' in df.columns:
-            # Convertir strings a float
             df['rent_value'] = pd.to_numeric(df['rent_value'], errors='coerce')
 
-            # Eliminar NaN y valores inferiores a 1,000,000
             initial_count = len(df)
             df = df[df['rent_value'].notna() & (df['rent_value'] >= 1000000)]
             removed_count = initial_count - len(df)
             print(f"Eliminados {removed_count} registros con rent_value NaN o < 1,000,000")
 
-        # Guardar como CSV
         print(f"Convirtiendo a CSV: {csv_file_path}")
         df.to_csv(csv_file_path, index=False, encoding='utf-8')
 
@@ -76,11 +66,9 @@ def json_to_csv(json_file_path, csv_file_path=None):
 
 def main():
     """Función principal para ejecutar la conversión"""
-    # Definir rutas
     json_file = "json_habi_data/inmobiliario.json"
     csv_file = "json_habi_data/inmobiliario.csv"
 
-    # Ejecutar conversión
     result = json_to_csv(json_file, csv_file)
 
     if result:
