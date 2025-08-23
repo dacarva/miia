@@ -38,6 +38,25 @@ def json_to_csv(json_file_path, csv_file_path=None):
         # Convertir a DataFrame de pandas
         df = pd.DataFrame(data)
 
+        # Aplicar filtros y transformaciones
+        print("Aplicando filtros y transformaciones...")
+
+        # Filtrar business_type que contengan "venta" (case insensitive)
+        if 'business_type' in df.columns:
+            df = df[df['business_type'].str.contains('venta', case=False, na=False)]
+            print(f"Filtrado por business_type 'venta': {len(df)} registros")
+
+        # Procesar rent_value: convertir strings a float y limpiar valores
+        if 'rent_value' in df.columns:
+            # Convertir strings a float
+            df['rent_value'] = pd.to_numeric(df['rent_value'], errors='coerce')
+
+            # Eliminar NaN y valores inferiores a 1,000,000
+            initial_count = len(df)
+            df = df[df['rent_value'].notna() & (df['rent_value'] >= 1000000)]
+            removed_count = initial_count - len(df)
+            print(f"Eliminados {removed_count} registros con rent_value NaN o < 1,000,000")
+
         # Guardar como CSV
         print(f"Convirtiendo a CSV: {csv_file_path}")
         df.to_csv(csv_file_path, index=False, encoding='utf-8')
