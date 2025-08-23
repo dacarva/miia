@@ -51,6 +51,7 @@ contract PortfolioTracker is Ownable {
 
     constructor(address _tokenFactory) {
         tokenFactory = PropertyTokenFactory(_tokenFactory);
+        _transferOwnership(msg.sender);
     }
 
     function addInvestment(
