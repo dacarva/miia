@@ -214,3 +214,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Data
+/home/oscar/Github/miia/data/json_habi_data
+/home/oscar/Github/miia/data/venv
+
