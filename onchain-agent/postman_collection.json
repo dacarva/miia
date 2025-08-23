@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "AgentKit WhatsApp Multi-Wallet API",
-    "description": "Collection for testing the AgentKit API with phone number-based wallet management",
+    "name": "Colombian Real Estate Tokenization API",
+    "description": "Collection for testing the tokenized real estate investment platform with WhatsApp integration",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -11,27 +11,98 @@
       "type": "string"
     },
     {
-      "key": "user1_phone",
-      "value": "+1234567890",
+      "key": "colombian_user1",
+      "value": "+573001234567",
       "type": "string"
     },
     {
-      "key": "user2_phone",
-      "value": "+9876543210",
+      "key": "colombian_user2",
+      "value": "+573129876543",
       "type": "string"
     },
     {
-      "key": "user3_phone",
-      "value": "+1122334455",
+      "key": "colombian_user3",
+      "value": "+573208765432",
+      "type": "string"
+    },
+    {
+      "key": "property_id",
+      "value": "16418-M4614094",
       "type": "string"
     }
   ],
   "item": [
     {
-      "name": "Agent Interactions",
+      "name": "Property API Tests",
       "item": [
         {
-          "name": "Create New Wallet - User 1",
+          "name": "Get All Properties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/properties?limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "properties"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Properties by Neighborhood",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/properties?neighborhood=Centro&limit=3",
+              "host": ["{{base_url}}"],
+              "path": ["api", "properties"],
+              "query": [
+                {
+                  "key": "neighborhood",
+                  "value": "Centro"
+                },
+                {
+                  "key": "limit",
+                  "value": "3"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Properties by Price Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/properties?minPrice=200000000&maxPrice=400000000&limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "properties"],
+              "query": [
+                {
+                  "key": "minPrice",
+                  "value": "200000000"
+                },
+                {
+                  "key": "maxPrice", 
+                  "value": "400000000"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Property Details",
           "request": {
             "method": "POST",
             "header": [
@@ -42,7 +113,33 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userMessage\": \"Hello! I'm a new user and I'd like to get started with crypto trading. Can you help me set up a wallet?\",\n  \"phoneNumber\": \"{{user1_phone}}\",\n  \"createNewWallet\": true\n}"
+              "raw": "{\n  \"propertyId\": \"{{property_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/properties",
+              "host": ["{{base_url}}"],
+              "path": ["api", "properties"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "WhatsApp Real Estate Agent",
+      "item": [
+        {
+          "name": "Initial Investment Interest - User 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Quiero ver oportunidades de inversión\",\n  \"phoneNumber\": \"{{colombian_user1}}\",\n  \"createNewWallet\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/agent",
@@ -52,7 +149,7 @@
           }
         },
         {
-          "name": "Check Balance - User 1",
+          "name": "Ask for Properties in Centro",
           "request": {
             "method": "POST",
             "header": [
@@ -63,7 +160,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userMessage\": \"What's my wallet balance?\",\n  \"phoneNumber\": \"{{user1_phone}}\"\n}"
+              "raw": "{\n  \"userMessage\": \"Muéstrame propiedades en el barrio Centro\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/agent",
@@ -73,7 +170,7 @@
           }
         },
         {
-          "name": "Buy Tokens - User 1",
+          "name": "Ask About Property Investment",
           "request": {
             "method": "POST",
             "header": [
@@ -84,7 +181,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userMessage\": \"I want to buy some ETH. Can you help me with that?\",\n  \"phoneNumber\": \"{{user1_phone}}\"\n}"
+              "raw": "{\n  \"userMessage\": \"¿Cuánto necesito para invertir en la propiedad {{property_id}}?\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/agent",
@@ -94,7 +191,7 @@
           }
         },
         {
-          "name": "Create New Wallet - User 2",
+          "name": "Investment Calculation",
           "request": {
             "method": "POST",
             "header": [
@@ -105,7 +202,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userMessage\": \"Hi! I'm another user and I need a new wallet for my crypto trading.\",\n  \"phoneNumber\": \"{{user2_phone}}\",\n  \"createNewWallet\": true\n}"
+              "raw": "{\n  \"userMessage\": \"Quiero invertir 2 millones de pesos en esa propiedad\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/agent",
@@ -115,7 +212,7 @@
           }
         },
         {
-          "name": "Check Balance - User 2",
+          "name": "Check Wallet Balance",
           "request": {
             "method": "POST",
             "header": [
@@ -126,7 +223,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userMessage\": \"What's my wallet balance?\",\n  \"phoneNumber\": \"{{user2_phone}}\"\n}"
+              "raw": "{\n  \"userMessage\": \"¿Cuál es el saldo de mi billetera?\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/agent",
@@ -136,7 +233,7 @@
           }
         },
         {
-          "name": "Sell Tokens - User 2",
+          "name": "New User Onboarding - User 2",
           "request": {
             "method": "POST",
             "header": [
@@ -147,7 +244,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userMessage\": \"I want to sell some of my ETH for USDC. Can you help?\",\n  \"phoneNumber\": \"{{user2_phone}}\"\n}"
+              "raw": "{\n  \"userMessage\": \"Hola, soy nuevo y quiero invertir en bienes raíces\",\n  \"phoneNumber\": \"{{colombian_user2}}\",\n  \"createNewWallet\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/agent",
@@ -155,9 +252,40 @@
               "path": ["api", "agent"]
             }
           }
+        }
+      ]
+    },
+    {
+      "name": "WhatsApp Webhook Tests",
+      "item": [
+        {
+          "name": "Webhook Verification",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/whatsapp?hub.mode=subscribe&hub.verify_token=tu_token_de_verificacion&hub.challenge=test_challenge",
+              "host": ["{{base_url}}"],
+              "path": ["api", "whatsapp"],
+              "query": [
+                {
+                  "key": "hub.mode",
+                  "value": "subscribe"
+                },
+                {
+                  "key": "hub.verify_token",
+                  "value": "tu_token_de_verificacion"
+                },
+                {
+                  "key": "hub.challenge",
+                  "value": "test_challenge"
+                }
+              ]
+            }
+          }
         },
         {
-          "name": "Default Wallet (No Phone)",
+          "name": "WhatsApp Message - Investment Interest",
           "request": {
             "method": "POST",
             "header": [
@@ -168,12 +296,33 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userMessage\": \"What's my wallet balance?\"\n}"
+              "raw": "{\n  \"entry\": [{\n    \"changes\": [{\n      \"value\": {\n        \"messages\": [{\n          \"from\": \"{{colombian_user1}}\",\n          \"text\": {\"body\": \"Quiero ver oportunidades de inversión\"},\n          \"type\": \"text\"\n        }]\n      }\n    }]\n  }]\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/agent",
+              "raw": "{{base_url}}/api/whatsapp",
               "host": ["{{base_url}}"],
-              "path": ["api", "agent"]
+              "path": ["api", "whatsapp"]
+            }
+          }
+        },
+        {
+          "name": "WhatsApp Message - Property Inquiry",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entry\": [{\n    \"changes\": [{\n      \"value\": {\n        \"messages\": [{\n          \"from\": \"{{colombian_user1}}\",\n          \"text\": {\"body\": \"Muéstrame propiedades en Centro con menos de 250 millones\"},\n          \"type\": \"text\"\n        }]\n      }\n    }]\n  }]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/whatsapp",
+              "host": ["{{base_url}}"],
+              "path": ["api", "whatsapp"]
             }
           }
         }

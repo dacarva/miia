@@ -8,6 +8,7 @@ import {
   WalletProvider,
   wethActionProvider,
 } from "@coinbase/agentkit";
+import { propertyActionProvider } from "./property-action-provider";
 import * as fs from "fs";
 import { Address, Hex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
@@ -162,6 +163,7 @@ export async function prepareAgentkitAndWalletProvider(
         walletActionProvider(),
         erc20ActionProvider(),
         cdpApiActionProvider(),
+        propertyActionProvider(),
       ],
     });
 
