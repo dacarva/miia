@@ -10,6 +10,16 @@ import numpy as np
 COLOR_PALETTE = ['#6334a4', '#af94ce', '#8c7cae', '#9684ac', '#a474d0', '#dbc8ed', '#c4bcd4']
 BACKGROUND_COLOR = '#f9f9f9'
 
+# Mapeo de segmentos de mercado basado en el README
+SEGMENT_MAPPING = {
+    0: "Mercado Premium - Propiedades de alto valor",
+    1: "Nicho Especializado - Oportunidades únicas",
+    2: "Nicho Especializado - Oportunidades únicas",
+    3: "Mercado Estándar - Propiedades accesibles",
+    4: "Segmento Intermedio - Propiedades balanceadas",
+    5: "Nicho Especializado - Oportunidades únicas"
+}
+
 def load_and_process_data():
     """Cargar y procesar los datos de propiedades"""
     try:
@@ -39,9 +49,12 @@ def load_and_process_data():
         df = df.dropna(subset=['cluster'])
         df['cluster'] = df['cluster'].astype(int)
 
+        # Mapear clusters a descripciones de segmentos para la interfaz
+        df['segment_label'] = df['cluster'].map(SEGMENT_MAPPING)
+
         print(f"Propiedades con coordenadas válidas: {len(df)}")
         print(f"Ciudades únicas: {df['city_name'].nunique()}")
-        print(f"Clusters únicos: {df['cluster'].nunique()}")
+        print(f"Categorías únicas: {df['cluster'].nunique()}")
 
         return df
 
@@ -52,15 +65,7 @@ def load_and_process_data():
 def get_colombia_geojson():
     """Obtener GeoJSON de Colombia"""
     try:
-        # URL alternativa del GeoJSON de Colombia
-        url = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/colombia/colombia-departments.json"
-        with urlopen(url) as response:
-            geojson = json.load(response)
-            print("GeoJSON de Colombia cargado exitosamente")
-            return geojson
-    except Exception as e:
-        print(f"Error al cargar GeoJSON: {e}")
-        # GeoJSON de respaldo simplificado
+        # GeoJSON simplificado de Colombia para evitar problemas de conexión
         return {
             "type": "FeatureCollection",
             "features": [
@@ -76,12 +81,19 @@ def get_colombia_geojson():
                 }
             ]
         }
+    except Exception as e:
+        print(f"Error al crear GeoJSON: {e}")
+        # GeoJSON de respaldo mínimo
+        return {
+            "type": "FeatureCollection",
+            "features": []
+        }
 
 def create_interactive_map(df, geojson):
     """Crear mapa interactivo de Colombia"""
 
-    # Configurar colores para clusters
-    cluster_colors = {i: COLOR_PALETTE[i % len(COLOR_PALETTE)] for i in range(6)}
+    # Configurar colores para categorías
+    category_colors = {i: COLOR_PALETTE[i % len(COLOR_PALETTE)] for i in range(6)}
 
     # Crear figura base
     fig = go.Figure()
@@ -97,29 +109,28 @@ def create_interactive_map(df, geojson):
         showscale=False
     ))
 
-    # Añadir marcadores para cada propiedad por cluster
-    for cluster in sorted(df['cluster'].unique()):
-        cluster_df = df[df['cluster'] == cluster]
-        color = cluster_colors[cluster]
+    # Añadir marcadores para cada categoría
+    for category in sorted(df['cluster'].unique()):
+        category_df = df[df['cluster'] == category]
+        color = category_colors[category]
 
-        # Crear texto para hover
+        # Texto para hover
         hover_text = []
-        for _, row in cluster_df.iterrows():
+        for _, row in category_df.iterrows():
             text = f"""
             <b>{row.get('title', 'Sin título')}</b><br>
-            Ciudad: {row.get('city_name', 'Desconocida')}<br>
-            Tipo: {row.get('property_type', 'Desconocido')}<br>
-            Habitaciones: {row.get('rooms', 'N/A')}<br>
-            Baños: {row.get('bathrooms', 'N/A')}<br>
-            Área: {row.get('area', 'N/A')} m²<br>
-            Precio: ${row.get('sale_value', 0):,.0f}<br>
-            Cluster: {row.get('cluster', 'N/A')} - {row.get('category', 'Sin categoría')}
+            📍 {row.get('city_name', 'Desconocida')}<br>
+            🏠 {row.get('property_type', 'Desconocido')}<br>
+            🛏️ {row.get('rooms', 'N/A')} hab · 🚿 {row.get('bathrooms', 'N/A')} baños<br>
+            📏 {row.get('area', 'N/A')} m²<br>
+            💰 ${row.get('sale_value', 0):,.0f}<br>
+            🏷️ {row.get('segment_label', 'Sin segmento')}
             """
             hover_text.append(text)
 
         fig.add_trace(go.Scattermapbox(
-            lat=cluster_df['lat'],
-            lon=cluster_df['lon'],
+            lat=category_df['lat'],
+            lon=category_df['lon'],
             mode='markers',
             marker=dict(
                 size=10,
@@ -127,7 +138,7 @@ def create_interactive_map(df, geojson):
                 opacity=0.8,
                 symbol='circle'
             ),
-            name=f'Cluster {cluster}',
+            name=category_df['segment_label'].iloc[0] if not category_df.empty else f'Categoría {category}',
             text=hover_text,
             hoverinfo='text'
         ))
@@ -135,22 +146,22 @@ def create_interactive_map(df, geojson):
     # Configurar layout del mapa
     fig.update_layout(
         title=dict(
-            text='<b>Mapa de Propiedades Inmobiliarias en Colombia</b><br>'
-                 '<sub>Distribución geográfica por clusters de mercado</sub>',
+            text='<b>🌎 Mapa de Propiedades Inmobiliarias en Colombia</b><br>'
+             '<sub>Distribución geográfica por segmentos de mercado</sub>',
             x=0.5,
             xanchor='center',
-            font=dict(size=16, color='#333333')
+            font=dict(size=18, color='#333333')
         ),
         mapbox=dict(
             style="carto-positron",
-            zoom=4,
+            zoom=4.5,
             center=dict(lat=4.570868, lon=-74.297333)
         ),
         plot_bgcolor=BACKGROUND_COLOR,
         paper_bgcolor=BACKGROUND_COLOR,
         font=dict(color='#333333'),
         legend=dict(
-            title=dict(text="Clusters", font=dict(size=12)),
+            title=dict(text="🏷️ Segmentos de Mercado", font=dict(size=10)),
             yanchor="top",
             y=0.99,
             xanchor="left",
@@ -159,7 +170,7 @@ def create_interactive_map(df, geojson):
             bordercolor='#cccccc',
             borderwidth=1
         ),
-        height=800,
+        height=700,
         margin=dict(l=0, r=0, t=100, b=0)
     )
 
@@ -170,37 +181,32 @@ def generate_statistics(df):
     stats = {
         'total_properties': len(df),
         'unique_cities': df['city_name'].nunique(),
-        'unique_clusters': df['cluster'].nunique(),
-        'cluster_distribution': df['cluster'].value_counts().to_dict(),
+        'unique_categories': df['cluster'].nunique(),
+        'segment_distribution': df.groupby('cluster')['segment_label'].first().to_dict(),
+        'segment_counts': df['cluster'].value_counts().to_dict(),
         'top_cities': df['city_name'].value_counts().head(10).to_dict(),
-        'avg_price_by_cluster': df.groupby('cluster')['sale_value'].mean().to_dict()
+        'avg_price_by_segment': df.groupby('cluster')['sale_value'].mean().to_dict()
     }
     return stats
 
 def generate_html_output(fig, df, stats):
     """Generar salida HTML completa con estadísticas"""
 
-    # Crear HTML para estadísticas
+    # Crear HTML para estadísticas de segmentos
     stats_html = ""
-    for cluster, count in stats['cluster_distribution'].items():
-        avg_price = stats['avg_price_by_cluster'].get(cluster, 0)
+    for i, (segment_id, segment_name) in enumerate(stats['segment_distribution'].items()):
+        count = stats['segment_counts'].get(segment_id, 0)
+        avg_price = stats['avg_price_by_segment'].get(segment_id, 0)
         stats_html += f"""
-        <div class="stat-card" style="background: linear-gradient(135deg, {COLOR_PALETTE[cluster % len(COLOR_PALETTE)]}, {COLOR_PALETTE[(cluster + 2) % len(COLOR_PALETTE)]});">
+        <div class="stat-card" style="background: linear-gradient(135deg, {COLOR_PALETTE[segment_id % len(COLOR_PALETTE)]}, {COLOR_PALETTE[(segment_id + 2) % len(COLOR_PALETTE)]});">
             <h3>{count}</h3>
-            <p>Cluster {cluster}</p>
+            <p>{segment_name.split(' - ')[0]}</p>
             <small>Precio avg: ${avg_price:,.0f}</small>
         </div>
         """
 
-    # Crear HTML para top ciudades
+    # Crear HTML para top ciudades (eliminado)
     cities_html = ""
-    for city, count in stats['top_cities'].items():
-        cities_html += f"""
-        <tr>
-            <td>{city}</td>
-            <td>{count}</td>
-        </tr>
-        """
 
     html_content = f"""
     <!DOCTYPE html>
@@ -215,28 +221,20 @@ def generate_html_output(fig, df, stats):
                 background-color: {BACKGROUND_COLOR};
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 margin: 0;
-                padding: 20px;
+                padding: 0;
                 color: #333333;
             }}
             .container {{
-                max-width: 1400px;
+                width: 100%;
                 margin: 0 auto;
                 background: white;
-                border-radius: 12px;
-                box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-                padding: 25px;
-            }}
-            .header {{
-                text-align: center;
-                margin-bottom: 30px;
-                padding-bottom: 20px;
-                border-bottom: 2px solid #eeeeee;
             }}
             .stats-grid {{
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
                 gap: 20px;
-                margin-bottom: 30px;
+                margin-bottom: 20px;
+                padding: 20px;
             }}
             .stat-card {{
                 color: white;
@@ -261,57 +259,11 @@ def generate_html_output(fig, df, stats):
             .map-container {{
                 width: 100%;
                 height: 700px;
-                margin-bottom: 30px;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }}
-            .cities-table {{
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 20px;
-            }}
-            .cities-table th,
-            .cities-table td {{
-                padding: 12px;
-                text-align: left;
-                border-bottom: 1px solid #eeeeee;
-            }}
-            .cities-table th {{
-                background-color: {COLOR_PALETTE[0]};
-                color: white;
-                font-weight: bold;
-            }}
-            .cities-table tr:nth-child(even) {{
-                background-color: #f8f9fa;
-            }}
-            .footer {{
-                text-align: center;
-                margin-top: 30px;
-                padding-top: 20px;
-                border-top: 2px solid #eeeeee;
-                color: #666666;
-            }}
-            .color-palette {{
-                display: flex;
-                justify-content: center;
-                margin: 10px 0;
-            }}
-            .color-box {{
-                width: 20px;
-                height: 20px;
-                margin: 0 2px;
-                border-radius: 3px;
             }}
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <h1>🌎 Mapa de Propiedades Inmobiliarias en Colombia</h1>
-                <p>Visualización interactiva de propiedades clasificadas por clusters de mercado</p>
-            </div>
-
             <div class="stats-grid">
                 <div class="stat-card" style="background: linear-gradient(135deg, {COLOR_PALETTE[0]}, {COLOR_PALETTE[2]});">
                     <h3>{stats['total_properties']:,}</h3>
@@ -322,37 +274,14 @@ def generate_html_output(fig, df, stats):
                     <p>Ciudades diferentes</p>
                 </div>
                 <div class="stat-card" style="background: linear-gradient(135deg, {COLOR_PALETTE[2]}, {COLOR_PALETTE[4]});">
-                    <h3>{stats['unique_clusters']}</h3>
-                    <p>Clusters identificados</p>
+                    <h3>{stats['unique_categories']}</h3>
+                    <p>Segmentos identificados</p>
                 </div>
                 {stats_html}
             </div>
 
             <div class="map-container">
                 {fig.to_html(include_plotlyjs='cdn', div_id='map', full_html=False)}
-            </div>
-
-            <div>
-                <h3>Top 10 Ciudades con más propiedades</h3>
-                <table class="cities-table">
-                    <thead>
-                        <tr>
-                            <th>Ciudad</th>
-                            <th>Número de Propiedades</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {cities_html}
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="footer">
-                <div class="color-palette">
-                    {' '.join([f'<div class="color-box" style="background-color: {color};"></div>' for color in COLOR_PALETTE])}
-                </div>
-                <p><small>Paleta de colores utilizada: {', '.join(COLOR_PALETTE)}</small></p>
-                <p><small>Generado el {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}</small></p>
             </div>
         </div>
     </body>
@@ -372,7 +301,7 @@ def main():
         print("❌ No se encontraron datos válidos con coordenadas.")
         return
 
-    print("🗺️ Obteniendo datos geográficos de Colombia...")
+    print("🗺️ Configurando datos geográficos de Colombia...")
     geojson = get_colombia_geojson()
 
     print("🎨 Generando mapa interactivo...")
@@ -392,11 +321,12 @@ def main():
     print(f"📊 Estadísticas finales:")
     print(f"   - Propiedades mapeadas: {stats['total_properties']:,}")
     print(f"   - Ciudades únicas: {stats['unique_cities']}")
-    print(f"   - Clusters: {stats['unique_clusters']}")
+    print(f"   - Categorías: {stats['unique_categories']}")
 
-    for cluster, count in stats['cluster_distribution'].items():
-        avg_price = stats['avg_price_by_cluster'].get(cluster, 0)
-        print(f"   - Cluster {cluster}: {count} propiedades (avg: ${avg_price:,.0f})")
+    for segment_id, segment_name in stats['segment_distribution'].items():
+        count = stats['segment_counts'].get(segment_id, 0)
+        avg_price = stats['avg_price_by_segment'].get(segment_id, 0)
+        print(f"   - {segment_name}: {count} propiedades (avg: ${avg_price:,.0f})")
 
 if __name__ == "__main__":
     main()
