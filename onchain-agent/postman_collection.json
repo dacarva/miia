@@ -1,0 +1,298 @@
+{
+  "info": {
+    "name": "AgentKit WhatsApp Multi-Wallet API",
+    "description": "Collection for testing the AgentKit API with phone number-based wallet management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "user1_phone",
+      "value": "+1234567890",
+      "type": "string"
+    },
+    {
+      "key": "user2_phone",
+      "value": "+9876543210",
+      "type": "string"
+    },
+    {
+      "key": "user3_phone",
+      "value": "+1122334455",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Agent Interactions",
+      "item": [
+        {
+          "name": "Create New Wallet - User 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Hello! I'm a new user and I'd like to get started with crypto trading. Can you help me set up a wallet?\",\n  \"phoneNumber\": \"{{user1_phone}}\",\n  \"createNewWallet\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Check Balance - User 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"What's my wallet balance?\",\n  \"phoneNumber\": \"{{user1_phone}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Buy Tokens - User 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"I want to buy some ETH. Can you help me with that?\",\n  \"phoneNumber\": \"{{user1_phone}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Create New Wallet - User 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Hi! I'm another user and I need a new wallet for my crypto trading.\",\n  \"phoneNumber\": \"{{user2_phone}}\",\n  \"createNewWallet\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Check Balance - User 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"What's my wallet balance?\",\n  \"phoneNumber\": \"{{user2_phone}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Sell Tokens - User 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"I want to sell some of my ETH for USDC. Can you help?\",\n  \"phoneNumber\": \"{{user2_phone}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Default Wallet (No Phone)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"What's my wallet balance?\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wallet Management",
+      "item": [
+        {
+          "name": "List All Wallets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/wallets",
+              "host": ["{{base_url}}"],
+              "path": ["api", "wallets"]
+            }
+          }
+        },
+        {
+          "name": "Get User 1 Wallet",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/wallets?phoneNumber={{user1_phone}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "wallets"],
+              "query": [
+                {
+                  "key": "phoneNumber",
+                  "value": "{{user1_phone}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User 2 Wallet",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/wallets?phoneNumber={{user2_phone}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "wallets"],
+              "query": [
+                {
+                  "key": "phoneNumber",
+                  "value": "{{user2_phone}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete User 3 Wallet",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/wallets?phoneNumber={{user3_phone}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "wallets"],
+              "query": [
+                {
+                  "key": "phoneNumber",
+                  "value": "{{user3_phone}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Testing",
+      "item": [
+        {
+          "name": "Invalid Phone Number",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Hello\",\n  \"phoneNumber\": \"invalid-phone\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Get Non-existent Wallet",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/wallets?phoneNumber=+9999999999",
+              "host": ["{{base_url}}"],
+              "path": ["api", "wallets"],
+              "query": [
+                {
+                  "key": "phoneNumber",
+                  "value": "+9999999999"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
