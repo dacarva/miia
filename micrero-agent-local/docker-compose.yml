@@ -1,0 +1,146 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: micrero_agent
+      POSTGRES_USER: micrero_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U micrero_user -d micrero_agent"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Ollama LLM Server
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      - ./data/ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_HOST=0.0.0.0
+
+  # Backend API
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    environment:
+      - DATABASE_URL=postgresql://micrero_user:${DB_PASSWORD}@postgres:5432/micrero_agent
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - OLLAMA_URL=http://ollama:11434
+      - SECRET_KEY=${SECRET_KEY}
+    volumes:
+      - ./data/uploads:/app/uploads
+      - ./data/chroma:/app/chroma
+      - ./config:/app/config
+    ports:
+      - "8000:8000"
+
+  # WhatsApp Bot
+  whatsapp-bot:
+    build: ./whatsapp-bot
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      - API_URL=http://backend:8000
+      - SECRET_KEY=${SECRET_KEY}
+    volumes:
+      - ./data/whatsapp-sessions:/app/sessions
+      - ./data/logs:/app/logs
+    ports:
+      - "3001:3001"
+
+  # Frontend Dashboard
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      - API_URL=http://backend:8000
+    ports:
+      - "8501:8501"
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites-available:/etc/nginx/sites-available
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    depends_on:
+      - backend
+      - frontend
+
+  # Celery Worker
+  celery-worker:
+    build: ./backend
+    restart: unless-stopped
+    command: celery -A app.celery worker --loglevel=info
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DATABASE_URL=postgresql://micrero_user:${DB_PASSWORD}@postgres:5432/micrero_agent
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+    volumes:
+      - ./data/uploads:/app/uploads
+      - ./data/chroma:/app/chroma
+
+  # Celery Beat (Scheduler)
+  celery-beat:
+    build: ./backend
+    restart: unless-stopped
+    command: celery -A app.celery beat --loglevel=info
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DATABASE_URL=postgresql://micrero_user:${DB_PASSWORD}@postgres:5432/micrero_agent
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+
+volumes:
+  postgres_data:
+  redis_data:
+  ollama_data:
+  chroma_data:

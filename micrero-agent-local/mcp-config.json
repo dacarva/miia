@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://miia:${EXTERNAL_DB_PASSWORD}@159.203.92.4:5432/cluster"
+      ],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://miia:${EXTERNAL_DB_PASSWORD}@159.203.92.4:5432/cluster"
+      }
+    }
+  }
+}
