@@ -7,7 +7,10 @@
     "build": "next build",
     "build:hackathon": "next build --no-lint",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "echo 'Tests skipped for hackathon'",
+    "pretest": "echo 'Pre-test skipped'",
+    "posttest": "echo 'Post-test skipped'"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.2.1",

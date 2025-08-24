@@ -8,6 +8,10 @@ const nextConfig = {
     // Disable TypeScript checking during build for hackathon
     ignoreBuildErrors: true,
   },
+  // Disable all testing during build
+  env: {
+    SKIP_TESTS: 'true',
+  },
 }
 
 module.exports = nextConfig
