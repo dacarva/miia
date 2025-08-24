@@ -10,7 +10,8 @@
     "lint": "next lint",
     "test": "echo 'Tests skipped for hackathon'",
     "pretest": "echo 'Pre-test skipped'",
-    "posttest": "echo 'Post-test skipped'"
+    "posttest": "echo 'Post-test skipped'",
+    "postinstall": "echo 'Dependencies installed successfully'"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.2.1",
@@ -28,6 +29,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^10.0.0",
+    "tailwindcss": "^3.4.1",
+    "postcss": "^8",
     "viem": "^2.24.1",
     "wagmi": "^2.11.0"
   },
@@ -37,8 +40,6 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.15",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
 }
