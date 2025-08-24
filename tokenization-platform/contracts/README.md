@@ -1,21 +1,24 @@
 # MIIA - Colombian Real Estate Tokenization Platform
 
-Smart contracts for tokenizing Colombian real estate properties using ERC-3643 T-REX standard for regulatory compliance. **Hackathon Version** - Simplified for demonstration purposes.
+Smart contracts for tokenizing Colombian real estate properties using ERC-3643 T-REX standard for regulatory compliance. **Hackathon Version** - Simplified for demonstration purposes with Colombian COP token integration.
 
 ## 🏗️ Architecture
 
 ### Core Contracts
 
-- **PropertyToken.sol**: ERC-3643 compliant token representing fractional ownership of a property
+- **PropertyToken.sol**: ERC-3643 compliant token representing fractional ownership of a property (optimized for size)
+- **ColombianCOP.sol**: ERC-20 mock token for Colombian Peso (COP) with 100 trillion supply
 - **SimpleCompliance.sol**: Simplified compliance module for hackathon demo (auto-compliant)
 - **HackathonPropertyFactory.sol**: Factory for creating property tokens with compliance setup
 - **T-REX Infrastructure**: IdentityRegistry, TrustedIssuersRegistry, ClaimTopicsRegistry
 
 ### Hackathon Features
 
+- **🇨🇴 COP-Only Purchases**: All properties can only be purchased using Colombian COP tokens
 - **Auto-Compliance**: All addresses are automatically KYC compliant for demo purposes
 - **Simplified Workflow**: Streamlined tokenization process for hackathon presentation
 - **Multiple Properties**: Support for multiple property tokenizations
+- **Optimized Contracts**: Reduced contract size for deployment compatibility
 - **Base Sepolia Deployment**: Live testnet deployment for demonstration
 
 ## 🚀 Quick Start
@@ -42,7 +45,14 @@ npx hardhat test
 ### 4. Run Demo Tokenization
 
 ```bash
+# Deploy Property 1 (includes Colombian COP token)
 npx hardhat run scripts/deploy-property-1-simple.js --network localhost
+
+# Deploy Property 2 (reuses COP token)
+npx hardhat run scripts/deploy-property-2-simple.js --network localhost
+
+# Deploy Property 3 (reuses COP token)
+npx hardhat run scripts/deploy-property-3-simple.js --network localhost
 ```
 
 ## 📋 Testing
@@ -50,10 +60,13 @@ npx hardhat run scripts/deploy-property-1-simple.js --network localhost
 The test suite covers:
 
 - Property token creation and validation
+- Colombian COP token integration and testing
+- COP-based purchase workflows
 - Simplified compliance rules (auto-compliant)
-- Token purchase workflows
+- Token purchase workflows with COP payments
 - Multiple investor scenarios
 - End-to-end tokenization process
+- COP amount calculations and validations
 
 ### Run Specific Tests
 
@@ -66,6 +79,9 @@ npx hardhat test --reporter spec
 
 # Run specific test file
 npx hardhat test test/SimpleTokenization.test.js
+
+# Run Colombian COP tests
+npx hardhat test test/ColombianCOP.test.js
 ```
 
 ## 🔧 Deployment
@@ -79,7 +95,10 @@ npx hardhat node
 
 2. Deploy contracts:
 ```bash
+# Deploy all properties with COP integration
 npx hardhat run scripts/deploy-property-1-simple.js --network localhost
+npx hardhat run scripts/deploy-property-2-simple.js --network localhost
+npx hardhat run scripts/deploy-property-3-simple.js --network localhost
 ```
 
 ### Base Sepolia Testnet
@@ -106,61 +125,70 @@ npx hardhat verify --network base-sepolia DEPLOYED_CONTRACT_ADDRESS
 
 ### Base Sepolia Testnet
 
-**Property 1: Apartamento Chapinero Premium**
-- Token Address: `0xE5e3203B043AaB9d2a43929Fc9ECde7f0D90DE6A`
-- Symbol: `CHAP001`
-- Total Value: 500 ETH (500M COP)
-- Total Tokens: 500,000
-- Status: Ready for demo
+**Property 1: Apartaestudio La Julita Premium**
+- Token Address: `0xCaa3bd187e785c37b24eBb5c87e26bBe621dEACa`
+- Symbol: `LAJU001`
+- Sale Value: 240M COP
+- Total Tokens: 240,000
+- 🇨🇴 Purchase Price: 1,000 COP per token
+- Status: Ready for COP-based purchases
 
-**Property 2: Casa Zona Rosa Bogotá**
-- Token Address: `0x98e7a98DfD326EBd13c78789768EaDe3f2251C56`
-- Symbol: `ROSA002`
-- Total Value: 800 ETH (800M COP)
-- Total Tokens: 800,000
-- Status: Ready for demo
+**Property 2: Apartamento Cerritos Premium**
+- Token Address: `0x642165367c007e414a4899a884ac1026169524A5`
+- Symbol: `CERR002`
+- Sale Value: 1.6B COP
+- Total Tokens: 1,600,000
+- 🇨🇴 Purchase Price: 1,000 COP per token
+- Status: Ready for COP-based purchases
 
-**Property 3: Oficina El Poblado Medellín**
-- Token Address: `0x188c31F1630a5F1ec7970962A1F3CcDe65E94C82`
-- Symbol: `POB003`
-- Total Value: 350 ETH (350M COP)
-- Total Tokens: 350,000
-- Status: Ready for demo
+**Property 3: PH Dúplex Rosales Premium**
+- Token Address: `0x98bBa5749433Ab65Ea274DBA86C31308c470Bbed`
+- Symbol: `ROSA003`
+- Sale Value: 2.1B COP
+- Total Tokens: 2,100,000
+- 🇨🇴 Purchase Price: 1,000 COP per token
+- Status: Ready for COP-based purchases
 
 ### Infrastructure Contracts
 
-- **TrustedIssuersRegistry**: `0xe55B8d0F9776B97AF9d4b422d35f294216AB5B78`
-- **ClaimTopicsRegistry**: `0xF5389C56Bc55e66D882cAB9814b176090d9996b7`
-- **IdentityRegistryStorage**: `0x524b05CE6ec12AE02814f47C45478f06166Cc6Dc`
-- **IdentityRegistry**: `0xC53C56848a8a62B8bea942C2844546B7b7E8e8Cc`
+- **TrustedIssuersRegistry**: `0xf16ee4801a58ac2b8D8fa6A820B97fa61fcc89B3`
+- **ClaimTopicsRegistry**: `0x6d08364738Ea9f8349520d95E9928f0917bB7CaB`
+- **IdentityRegistryStorage**: `0x6226386501E2cb20F5B0315C1070e39a9A3F1Ba6`
+- **IdentityRegistry**: `0x405B764d249c9B69b7e53CEaAc2ffE1F116A80D8`
+- **🇨🇴 ColombianCOP Token**: `0xD1E0A2c64e7a1Db0b7455587c2b382C756c38f6E` (100 trillion supply)
 
 ## 💰 Token Economics
 
 ### Property Tokenization Model
 
+- **🇨🇴 Purchase Currency**: Colombian COP tokens only
 - **Token Supply**: Based on property value and minimum investment
-- **Price Per Token**: Property Value ÷ Total Tokens
+- **Price Per Token**: Property Sale Value ÷ Total Tokens (in COP)
 - **Minimum Purchase**: 1 token
 - **Platform Fee**: None (hackathon demo)
+- **COP Token Supply**: 100 trillion tokens (mock token)
 
-### Example: Apartamento Chapinero Premium
+### Example: Apartaestudio La Julita Premium
 
 ```
-Property Value: 500,000,000 COP (500M COP)
-Total Tokens: 500,000
-Price per Token: 1,000 COP
+Property Sale Value: 240,000,000 COP (240M COP)
+Total Tokens: 240,000
+🇨🇴 Price per Token: 1,000 COP
 Minimum Investment: 1,000 COP (1 token)
-Ownership per Token: 0.0002% of property
+Ownership per Token: 0.000417% of property
+Required COP Tokens: 1,000 COP tokens per property token
 ```
 
 ## 🔒 Security Features
 
 ### Hackathon Compliance
 
+- **🇨🇴 COP-Only Purchases**: All properties require Colombian COP tokens
 - **Auto-KYC**: All addresses are automatically compliant for demo
 - **Simplified Rules**: Streamlined for hackathon presentation
 - **Transfer Restrictions**: Standard T-REX transfer restrictions
 - **Access Control**: Role-based permissions using OpenZeppelin
+- **Contract Optimization**: Reduced size for deployment compatibility
 
 ### Smart Contract Security
 
@@ -184,10 +212,12 @@ Ownership per Token: 0.0002% of property
 ```javascript
 {
   totalInvestments: 3,
-  totalValue: 1650000000,     // 1.65B COP
-  totalTokens: 1650000,
+  totalValue: 3940000000,     // 3.94B COP
+  totalTokens: 3940000,
   activeProperties: 3,
-  deploymentNetwork: "base-sepolia"
+  deploymentNetwork: "base-sepolia",
+  copTokenAddress: "0x...",
+  purchaseCurrency: "COP"
 }
 ```
 
@@ -206,22 +236,22 @@ The contracts integrate with the MIIA platform through:
 
 Key events for off-chain integration:
 
-- `PropertyTokenCreated`: New property tokenized
-- `SharesPurchased`: Token purchase completed
-- `PropertyTokenized`: Property details initialized
+- `PropertyTokenized`: New property tokenized with COP integration
+- `SharesPurchased`: Token purchase completed with COP amount
+- `ColombianCOPMinted`: COP tokens minted for testing
 - `KYCStatusUpdated`: KYC verification status change
 
 ## 🧪 Demo Scenario
 
 The test demonstrates a complete tokenization workflow:
 
-1. **Deploy Infrastructure**: T-REX registry contracts
-2. **Create Property Token**: Apartamento in Chapinero, Bogotá
+1. **Deploy Infrastructure**: T-REX registry contracts + Colombian COP token
+2. **Create Property Token**: Apartaestudio in La Julita, Pereira
 3. **Setup Compliance**: Auto-compliant KYC for all addresses
 4. **Register Investors**: Multiple investor identities
-5. **Execute Purchases**: Buy tokens for multiple investors
+5. **Execute COP Purchases**: Buy tokens using Colombian COP tokens
 6. **Verify Holdings**: Confirm token balances and ownership
-7. **Calculate Performance**: Track investment percentages
+7. **Calculate Performance**: Track investment percentages and COP amounts
 
 ### Demo Output
 
@@ -229,27 +259,32 @@ The test demonstrates a complete tokenization workflow:
 🏗️  Setting up T-REX infrastructure for hackathon...
 ✅ T-REX infrastructure deployed successfully
 
-📄 Checking property details...
-   ✅ Property ID: HACK001
-   ✅ Total Value: 350.0 ETH
-   ✅ Total Tokens: 350000
+🇨🇴 Deploying Colombian COP Token...
+✅ ColombianCOP deployed at: 0x...
+✅ Colombian COP token set in property
 
-💰 Testing token purchase with auto-compliance...
+📄 Checking property details...
+   ✅ Property ID: MIIA001
+   ✅ Sale Value: 240M COP
+   ✅ Total Tokens: 240000
+
+💰 Testing COP-based token purchase...
    ✅ Identity registered for investor: 0x...
+   ✅ Required COP: 10,000,000 COP tokens
    ✅ Tokens purchased: 10000
-   ✅ Investor shares: 10000
-   📊 Ownership percentage: 2.8571%
+   📊 Ownership percentage: 4.17%
 
 🚀 === HACKATHON TOKENIZATION DEMO ===
 1️⃣  Setting up investor identities...
    ✅ Identities registered for both investors (auto-compliant)
-2️⃣  Executing token purchases...
-   💰 Investor1 tokens: 15000
-   💰 Investor2 tokens: 8000
+2️⃣  Executing COP purchases...
+   💰 Investor1 tokens: 15000 (15M COP paid)
+   💰 Investor2 tokens: 8000 (8M COP paid)
 3️⃣  Final summary:
    🏭 Total supply: 23000
-   🛍️  Available: 327000
-   📊 Sold: 6.57%
+   🛍️  Available: 217000
+   📊 Sold: 9.58%
+   🇨🇴 Total COP collected: 23M COP
 🎉 HACKATHON DEMO COMPLETED SUCCESSFULLY!
 ```
 
@@ -257,7 +292,8 @@ The test demonstrates a complete tokenization workflow:
 
 ### Contract Interfaces
 
-- [PropertyToken Interface](./contracts/PropertyToken.sol)
+- [PropertyToken Interface](./contracts/PropertyToken.sol) - COP-integrated property tokens
+- [ColombianCOP Interface](./contracts/ColombianCOP.sol) - Colombian Peso mock token
 - [SimpleCompliance Interface](./contracts/SimpleCompliance.sol)
 - [HackathonPropertyFactory Interface](./contracts/HackathonPropertyFactory.sol)
 

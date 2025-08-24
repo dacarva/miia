@@ -1,50 +1,87 @@
 {
   "network": "base-sepolia",
   "chainId": 84532,
-  "timestamp": "2025-08-24T00:52:58.801Z",
+  "timestamp": "2025-08-24T02:39:44.343Z",
   "deployer": "0x53Ec0aF115619c536480C95Dec4a065e27E6419F",
   "contracts": {
-    "TrustedIssuersRegistry": "0xe55B8d0F9776B97AF9d4b422d35f294216AB5B78",
-    "ClaimTopicsRegistry": "0xF5389C56Bc55e66D882cAB9814b176090d9996b7",
-    "IdentityRegistryStorage": "0x524b05CE6ec12AE02814f47C45478f06166Cc6Dc",
-    "IdentityRegistry": "0xC53C56848a8a62B8bea942C2844546B7b7E8e8Cc"
+    "TrustedIssuersRegistry": "0xf16ee4801a58ac2b8D8fa6A820B97fa61fcc89B3",
+    "ClaimTopicsRegistry": "0x6d08364738Ea9f8349520d95E9928f0917bB7CaB",
+    "IdentityRegistryStorage": "0x6226386501E2cb20F5B0315C1070e39a9A3F1Ba6",
+    "IdentityRegistry": "0x405B764d249c9B69b7e53CEaAc2ffE1F116A80D8",
+    "ColombianCOP": "0xD1E0A2c64e7a1Db0b7455587c2b382C756c38f6E"
   },
   "properties": {
     "MIIA001": {
-      "name": "Apartamento Chapinero Premium",
-      "symbol": "CHAP001",
-      "tokenAddress": "0xE5e3203B043AaB9d2a43929Fc9ECde7f0D90DE6A",
-      "complianceAddress": "0x4BC35947FC28D17493C6950494dc82D8b4ee041A",
-      "totalValue": "500.0 ETH",
-      "totalTokens": 500000,
+      "name": "Apartaestudio en Venta, La Julita, Pereira",
+      "symbol": "LAJU001",
+      "tokenAddress": "0xCaa3bd187e785c37b24eBb5c87e26bBe621dEACa",
+      "complianceAddress": "0xd9F5B533ED6411BeC2CC085276835D1aA88f0bCE",
+      "totalValue": "240.0 ETH",
+      "totalTokens": 240000,
       "soldTokens": 0,
-      "availableTokens": 500000
+      "availableTokens": 240000,
+      "propertyDetails": {
+        "propertyId": "MIIA001",
+        "title": "Apartaestudio en Venta, La Julita, Pereira",
+        "neighborhood": "La Julita",
+        "cityName": "Pereira",
+        "propertyType": "apartaestudio",
+        "area": 32,
+        "saleValue": 240000000,
+        "totalValue": "240000000000000000000",
+        "totalTokens": 240000,
+        "isActive": true,
+        "copTokenAddress": "0xD1E0A2c64e7a1Db0b7455587c2b382C756c38f6E",
+        "copPricePerToken": 1000
+      }
     },
     "MIIA002": {
-      "name": "Casa Zona Rosa Bogotá",
-      "symbol": "ROSA002",
-      "tokenAddress": "0x98e7a98DfD326EBd13c78789768EaDe3f2251C56",
-      "complianceAddress": "0x58181E3d0D17e05289cd1f65Ec1f00c1665FEa9a",
-      "totalValue": "800.0 ETH",
-      "totalTokens": 800000,
+      "name": "Apartamento en Venta y Arriendo, CERRITOS, Pereira",
+      "symbol": "CERR002",
+      "tokenAddress": "0x642165367c007e414a4899a884ac1026169524A5",
+      "complianceAddress": "0xA23cB060c7269a06AD8853B7d534Be662685dA87",
+      "totalValue": "1600.0 ETH",
+      "totalTokens": 1600000,
       "soldTokens": 0,
-      "availableTokens": 800000
+      "availableTokens": 1600000,
+      "propertyDetails": {
+        "propertyId": "MIIA002",
+        "title": "Apartamento en Venta y Arriendo, CERRITOS, Pereira",
+        "neighborhood": "CERRITOS",
+        "cityName": "Pereira",
+        "propertyType": "apartamento",
+        "area": 310,
+        "saleValue": 1600000000,
+        "totalValue": "1600000000000000000000",
+        "totalTokens": 1600000,
+        "isActive": true,
+        "copTokenAddress": "0xD1E0A2c64e7a1Db0b7455587c2b382C756c38f6E",
+        "copPricePerToken": 1000
+      }
     },
     "MIIA003": {
-      "name": "Oficina El Poblado Medellín",
-      "symbol": "POB003",
-      "tokenAddress": "0x188c31F1630a5F1ec7970962A1F3CcDe65E94C82",
-      "complianceAddress": "0xC716DDC67C05163Cc327c1D69dD9F221910D5D4B",
-      "totalValue": "350.0 ETH",
-      "totalTokens": 350000,
+      "name": "PH dúplex Clásico en Rosales Alto, Bogotá",
+      "symbol": "ROSA003",
+      "tokenAddress": "0x98bBa5749433Ab65Ea274DBA86C31308c470Bbed",
+      "complianceAddress": "0x4E85f435e277778Be700d400e9e9053418869161",
+      "totalValue": "2100.0 ETH",
+      "totalTokens": 2100000,
       "soldTokens": 0,
-      "availableTokens": 350000
+      "availableTokens": 2100000,
+      "propertyDetails": {
+        "propertyId": "MIIA003",
+        "title": "PH dúplex Clásico en Rosales Alto, Bogotá",
+        "neighborhood": "Rosales Alto",
+        "cityName": "Bogotá D,C,",
+        "propertyType": "apartamento",
+        "area": 372,
+        "saleValue": 2100000000,
+        "totalValue": "2100000000000000000000",
+        "totalTokens": 2100000,
+        "isActive": true,
+        "copTokenAddress": "0xD1E0A2c64e7a1Db0b7455587c2b382C756c38f6E",
+        "copPricePerToken": 1000
+      }
     }
-  },
-  "summary": {
-    "totalPortfolioValue": "1650.0 ETH",
-    "totalProperties": 3,
-    "deploymentNetwork": "base-sepolia",
-    "readyForDemo": true
   }
 }

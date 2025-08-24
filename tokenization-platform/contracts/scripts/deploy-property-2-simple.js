@@ -1,6 +1,6 @@
 const hre = require("hardhat");
 
-const DEPLOYMENT_DELAY = 1;
+const DEPLOYMENT_DELAY = 4;
 
 // Helper function to wait
 const wait = (seconds) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
