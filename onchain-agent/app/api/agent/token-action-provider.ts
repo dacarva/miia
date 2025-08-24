@@ -17,9 +17,9 @@ const DEPLOYED_CONTRACTS = {
       name: "Apartaestudio en Venta, La Julita, Pereira",
       symbol: "LAJU001",
       tokenAddress: "0x05C9d708CcAa1296247E04312b199Fd285de1aA0" as Address,
-      saleValue: 240000000, // 240M COP
+      saleValue: 240000, // 240M COP (240,000 tokens * 1 COP each)
       totalTokens: 240000,
-      pricePerToken: 1000, // 1,000 COP per token
+      pricePerToken: 1, // 1 COP per token (simplified for hackathon)
       description: "Apartaestudio en Venta, La Julita, Pereira",
       location: "La Julita, Pereira",
       area: 32,
@@ -33,9 +33,9 @@ const DEPLOYED_CONTRACTS = {
       name: "Apartamento en Venta y Arriendo, CERRITOS, Pereira",
       symbol: "CERR002",
       tokenAddress: "0xF8A82FE1a182C8dD4FaD980972066A4C1780194b" as Address,
-      saleValue: 1600000000, // 1.6B COP
+      saleValue: 1600000, // 1.6B COP (1,600,000 tokens * 1 COP each)
       totalTokens: 1600000,
-      pricePerToken: 1000, // 1,000 COP per token
+      pricePerToken: 1, // 1 COP per token (simplified for hackathon)
       description: "Apartamento en Venta y Arriendo, CERRITOS, Pereira",
       location: "CERRITOS, Pereira",
       area: 310,
@@ -49,9 +49,9 @@ const DEPLOYED_CONTRACTS = {
       name: "PH dúplex Clásico en Rosales Alto, Bogotá",
       symbol: "ROSA003",
       tokenAddress: "0xD25a133AfE32B5e1519f0f174e9c2a3132c1bf9C" as Address,
-      saleValue: 2100000000, // 2.1B COP
+      saleValue: 2100000, // 2.1B COP (2,100,000 tokens * 1 COP each)
       totalTokens: 2100000,
-      pricePerToken: 1000, // 1,000 COP per token
+      pricePerToken: 1, // 1 COP per token (simplified for hackathon)
       description: "PH dúplex Clásico en Rosales Alto, Bogotá",
       location: "Rosales Alto, Bogotá",
       area: 372,
@@ -646,13 +646,13 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
       const approveCallData = encodeFunctionData({
         abi: [{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}],
         functionName: "approve",
-        args: [property.tokenAddress, BigInt(totalCostCOP * 1e18)] // Convert to wei (18 decimals)
+        args: [property.tokenAddress, BigInt(totalCostCOP * 1e12)] // Convert to wei (12 decimals for simplified pricing)
       });
 
       const buySharesCallData = encodeFunctionData({
         abi: [{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"copAmount","type":"uint256"}],"name":"buyShares","outputs":[],"stateMutability":"nonpayable","type":"function"}],
         functionName: "buyShares",
-        args: [BigInt(tokenAmount), BigInt(totalCostCOP * 1e18)] // Convert to wei (18 decimals)
+        args: [BigInt(tokenAmount), BigInt(totalCostCOP * 1e12)] // Convert to wei (12 decimals for simplified pricing)
       });
 
       // Send transactions sequentially

@@ -4,7 +4,7 @@ import { createAgent, clearAgentCache } from "./create-agent";
 
 /**
  * Handles incoming POST requests to interact with the AgentKit-powered AI agent.
- * This function processes user messages and streams responses from the agent.
+ * This function processes user messages and returns responses from the agent.
  *
  * @function POST
  * @param {Request & { json: () => Promise<AgentRequest> }} req - The incoming request object containing the user message.
@@ -52,7 +52,7 @@ export async function POST(
       }
     }
 
-    // 6️. Return the final response
+    // 5️. Return the final response
     return NextResponse.json({ response: agentResponse });
   } catch (error) {
     console.error("Error processing request:", error);
