@@ -36,6 +36,15 @@ interface TestResults {
 }
 
 export async function GET() {
+  // Skip execution during build/deployment
+  if (process.env.NODE_ENV === 'production' && process.env.SKIP_TESTS === 'true') {
+    return NextResponse.json({
+      success: true,
+      message: "Test endpoint disabled during deployment",
+      skipped: true
+    });
+  }
+
   try {
     console.log('🪙 Testing COP Token Purchase...');
     

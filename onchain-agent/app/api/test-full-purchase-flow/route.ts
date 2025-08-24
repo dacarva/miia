@@ -4,6 +4,14 @@ import { tokenActionProvider } from "../agent/token-action-provider";
 import { TokenPurchaseParams, COPPurchaseParams } from "../agent/token-action-provider";
 
 export async function GET() {
+  // Skip execution during build/deployment
+  if (process.env.NODE_ENV === 'production' && process.env.SKIP_TESTS === 'true') {
+    return NextResponse.json({
+      success: true,
+      message: "Test endpoint disabled during deployment",
+      skipped: true
+    });
+  }
   try {
     console.log("--- Starting Full Property Purchase Flow Test ---");
 

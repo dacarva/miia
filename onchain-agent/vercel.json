@@ -1,0 +1,19 @@
+{
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 240
+    }
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "SKIP_TESTS": "true"
+  },
+  "build": {
+    "env": {
+      "SKIP_TESTS": "true"
+    }
+  }
+}
