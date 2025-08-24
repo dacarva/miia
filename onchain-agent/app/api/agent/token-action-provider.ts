@@ -1,5 +1,5 @@
 import { ActionProvider, WalletProvider, CreateAction } from "@coinbase/agentkit";
-import { Address, parseEther, formatEther, encodeFunctionData } from "viem";
+import { Address, encodeFunctionData } from "viem";
 
 // Deployed contract addresses from the latest deployment (README.md)
 const DEPLOYED_CONTRACTS = {

@@ -49,6 +49,18 @@ cp .env.local .env
 npm run dev
 ```
 
+### Build Configuration
+For the hackathon, ESLint and TypeScript checking are disabled during build to avoid linter errors. This is configured in `next.config.js`:
+
+```javascript
+eslint: {
+  ignoreDuringBuilds: true,
+},
+typescript: {
+  ignoreBuildErrors: true,
+}
+```
+
 ### Environment Variables
 Create a `.env.local` file with the following variables:
 

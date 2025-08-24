@@ -59,7 +59,7 @@ export function createCustomTools() {
     new DynamicTool({
       name: "check_cop_balance_custom",
       description: "Verifica el saldo de tokens COP del usuario. Usa este tool para verificar el balance actual de COP tokens.",
-      func: async (input: string) => {
+      func: async (_input: string) => {
         try {
           // Call our working API endpoint
           const baseUrl = getBaseUrl();
@@ -172,7 +172,7 @@ export function createCustomTools() {
     new DynamicTool({
       name: "list_properties_custom",
       description: "Lista todas las propiedades tokenizadas disponibles para inversión en la plataforma MIIA. Usa este tool para ver todas las opciones disponibles.",
-      func: async (input: string) => {
+      func: async (_input: string) => {
         try {
           // Call our working API endpoint
           const baseUrl = getBaseUrl();
