@@ -3,11 +3,11 @@ import { prepareAgentkitAndWalletProvider } from "../agent/prepare-agentkit";
 import { encodeFunctionData, Address } from "viem";
 
 export async function GET() {
-  // Skip execution during build/deployment
-  if (process.env.NODE_ENV === 'production' && process.env.SKIP_TESTS === 'true') {
+  // Skip execution only during build, not runtime  
+  if (process.env.SKIP_RUNTIME_TESTS === 'true') {
     return NextResponse.json({
       success: true,
-      message: "Debug endpoint disabled during deployment",
+      message: "Debug endpoint disabled during runtime",
       skipped: true
     });
   }

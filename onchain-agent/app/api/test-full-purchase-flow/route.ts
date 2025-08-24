@@ -4,11 +4,11 @@ import { tokenActionProvider } from "../agent/token-action-provider";
 import { TokenPurchaseParams, COPPurchaseParams } from "../agent/token-action-provider";
 
 export async function GET(request: Request) {
-  // Skip execution during build/deployment
-  if (process.env.NODE_ENV === 'production' && process.env.SKIP_TESTS === 'true') {
+  // Skip execution only during build, not runtime
+  if (process.env.SKIP_RUNTIME_TESTS === 'true') {
     return NextResponse.json({
       success: true,
-      message: "Test endpoint disabled during deployment",
+      message: "Test endpoint disabled during runtime",
       skipped: true
     });
   }
