@@ -1,0 +1,7 @@
+# Ignore files for hackathon
+node_modules/
+.next/
+out/
+build/
+dist/
+*.min.js
