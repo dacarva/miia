@@ -1,0 +1,23 @@
+{
+  "name": "miia-tokenization-contracts",
+  "version": "1.0.0",
+  "description": "ERC-3643 T-REX smart contracts for Colombian real estate tokenization",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.js",
+    "verify": "hardhat verify"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^17.2.1",
+    "hardhat": "^2.22.0",
+    "hardhat-contract-sizer": "^2.10.1"
+  },
+  "dependencies": {
+    "@onchain-id/solidity": "^2.2.1",
+    "@openzeppelin/contracts": "4.8.3",
+    "@openzeppelin/contracts-upgradeable": "4.8.3",
+    "@tokenysolutions/t-rex": "^4.1.6"
+  }
+}
