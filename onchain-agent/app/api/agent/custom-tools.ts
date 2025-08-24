@@ -5,6 +5,19 @@ import { DynamicTool } from "@langchain/core/tools";
  * This bypasses the LangChain-AgentKit integration issues
  */
 
+// Get the base URL dynamically based on environment
+function getBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    // Client-side: use relative URLs
+    return '';
+  }
+  
+  // Server-side: use environment variable or default to localhost
+  return process.env.NEXT_PUBLIC_BASE_URL || 
+         process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 
+         'http://localhost:3000';
+}
+
 export function createCustomTools() {
   return [
     new DynamicTool({
@@ -19,7 +32,8 @@ export function createCustomTools() {
           }
 
           // Call our working API endpoint
-          const response = await fetch("http://localhost:3000/api/test-cop-purchase", {
+          const baseUrl = getBaseUrl();
+          const response = await fetch(`${baseUrl}/api/test-cop-purchase`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
           });
@@ -48,7 +62,8 @@ export function createCustomTools() {
       func: async (input: string) => {
         try {
           // Call our working API endpoint
-          const response = await fetch("http://localhost:3000/api/test-cop-purchase", {
+          const baseUrl = getBaseUrl();
+          const response = await fetch(`${baseUrl}/api/test-cop-purchase`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
           });
@@ -94,7 +109,8 @@ export function createCustomTools() {
           }
 
           // Call our working API endpoint
-          const response = await fetch("http://localhost:3000/api/test-property-purchase", {
+          const baseUrl = getBaseUrl();
+          const response = await fetch(`${baseUrl}/api/test-property-purchase`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
           });
@@ -129,7 +145,8 @@ export function createCustomTools() {
           }
 
           // Call our working API endpoint
-          const response = await fetch("http://localhost:3000/api/test-property-purchase", {
+          const baseUrl = getBaseUrl();
+          const response = await fetch(`${baseUrl}/api/test-property-purchase`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
           });
@@ -158,7 +175,8 @@ export function createCustomTools() {
       func: async (input: string) => {
         try {
           // Call our working API endpoint
-          const response = await fetch("http://localhost:3000/api/test-property-purchase", {
+          const baseUrl = getBaseUrl();
+          const response = await fetch(`${baseUrl}/api/test-property-purchase`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
           });

@@ -1,14 +1,15 @@
 {
   "info": {
     "name": "Colombian Real Estate Tokenization API",
-    "description": "Collection for testing the tokenized real estate investment platform with enhanced COP token operations, blockchain confirmation waiting, and WhatsApp integration. Features 4-minute transaction confirmation timeout with early exit when confirmed.",
+    "description": "Collection for testing the tokenized real estate investment platform with enhanced COP token operations, blockchain confirmation waiting, and WhatsApp integration. Features 4-minute transaction confirmation timeout with early exit when confirmed. Updated with dynamic URL support for production deployment.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "base_url",
       "value": "http://localhost:3000",
-      "type": "string"
+      "type": "string",
+      "description": "Base URL for API endpoints. For production, change to your deployed URL (e.g., https://your-app.vercel.app)"
     },
     {
       "key": "colombian_user1",

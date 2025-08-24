@@ -36,6 +36,9 @@ CDP_API_KEY_SECRET=your_coinbase_api_key_secret
 CDP_WALLET_SECRET=your_wallet_secret
 OPENAI_API_KEY=your_openai_api_key
 NETWORK_ID=base-sepolia
+
+# Optional: Base URL for production deployment
+NEXT_PUBLIC_BASE_URL=https://your-app.vercel.app
 ```
 
 ### Installation
@@ -44,6 +47,27 @@ npm install
 cp .env.local .env
 # Add your environment variables to .env
 npm run dev
+```
+
+### Environment Variables
+Create a `.env.local` file with the following variables:
+
+```bash
+# CDP Configuration
+CDP_API_KEY_ID=your_cdp_api_key_id_here
+CDP_API_KEY_SECRET=your_cdp_api_key_secret_here
+CDP_WALLET_SECRET=your_cdp_wallet_secret_here
+
+# OpenAI API Key for LLM
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Network Configuration
+NETWORK_ID=base-sepolia
+
+# Base URL for API endpoints (optional)
+# For local development: leave empty or set to http://localhost:3000
+# For production: set to your deployed URL (e.g., https://your-app.vercel.app)
+NEXT_PUBLIC_BASE_URL=
 ```
 
 ## 📡 API Endpoints
@@ -112,12 +136,35 @@ GET /api/wallets?phoneNumber=+573001234567
 
 ## 🧪 Testing
 
+### Complete Flow Testing
+Test the entire investment flow from wallet creation to property token purchase:
+
+```bash
+# Step 1: Create a new wallet with a new phone number
+curl -X POST "http://localhost:3000/api/agent" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userMessage": "Hola, quiero empezar a invertir en propiedades tokenizadas. Necesito crear una wallet y comprar tokens COP.",
+    "phoneNumber": "+573009876543",
+    "createNewWallet": true
+  }'
+
+# Step 2: Purchase property tokens
+curl -X POST "http://localhost:3000/api/agent" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userMessage": "Quiero comprar 5 tokens de MIIA001.",
+    "phoneNumber": "+573009876543"
+  }'
+```
+
 ### Postman Collection
 The project includes a comprehensive Postman collection with:
 - **Enhanced COP Token Operations**: Direct and LLM-integrated tests
 - **Variable-driven Requests**: Easy customization with predefined amounts
 - **Confirmation Testing**: Real timeout and early-exit scenarios
 - **Educational Scenarios**: Different investment amounts and guidance
+- **Production Deployment**: Updated with dynamic URL support
 
 ### Test Variables
 ```json
@@ -157,16 +204,25 @@ The project includes a comprehensive Postman collection with:
    - Transaction hash extraction
    - Multi-method confirmation detection
 
-3. **Agent Creation** (`/app/api/agent/create-agent.ts`)
+3. **Custom Tools** (`/app/api/agent/custom-tools.ts`)
+   - Dynamic URL support for production deployment
+   - Direct API endpoint integration
+   - Bypass LangChain-AgentKit compatibility issues
+   - Environment-aware base URL detection
+
+4. **Agent Creation** (`/app/api/agent/create-agent.ts`)
    - LLM configuration (GPT-5-nano)
    - Spanish-language system prompts
    - Colombian real estate context
+   - Custom tools integration
 
 ### Key Features Implementation
 - **Confirmation Waiting**: 5-second polling with dual detection methods
 - **Smart Wallet Support**: User Operations (Account Abstraction)
 - **Phone-based Wallets**: Automatic wallet creation and management
 - **Educational AI**: Investment guidance and requirement explanations
+- **Dynamic URL Support**: Automatic environment detection for production deployment
+- **Custom Tools Integration**: Bypass LangChain-AgentKit compatibility issues
 
 ## 📚 Documentation
 
@@ -192,6 +248,28 @@ CDP_API_KEY_ID=prod_key_id
 CDP_API_KEY_SECRET=prod_key_secret
 OPENAI_API_KEY=prod_openai_key
 NETWORK_ID=base-mainnet  # For production
+NEXT_PUBLIC_BASE_URL=https://your-app.vercel.app
+```
+
+### Dynamic URL Support
+The application automatically detects the environment and uses appropriate URLs:
+
+- **Local Development**: Uses `http://localhost:3000`
+- **Vercel**: Uses `https://${process.env.VERCEL_URL}` (automatically set)
+- **Custom**: Uses `NEXT_PUBLIC_BASE_URL` environment variable
+
+### Deployment Platforms
+
+#### Vercel
+```bash
+# Vercel automatically sets VERCEL_URL
+# No additional configuration needed for base URL
+```
+
+#### Other Platforms
+```bash
+# Set the base URL environment variable
+NEXT_PUBLIC_BASE_URL=https://your-deployed-app.com
 ```
 
 ### Monitoring

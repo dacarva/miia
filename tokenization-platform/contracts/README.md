@@ -130,7 +130,7 @@ npx hardhat verify --network base-sepolia DEPLOYED_CONTRACT_ADDRESS
 - Symbol: `LAJU001`
 - Sale Value: 240M COP
 - Total Tokens: 240,000
-- 🇨🇴 Purchase Price: 1,000 COP per token
+- 🇨🇴 Purchase Price: 1 COP per token (simplified pricing)
 - Status: Ready for COP-based purchases
 
 **Property 2: Apartamento Cerritos Premium**
@@ -138,7 +138,7 @@ npx hardhat verify --network base-sepolia DEPLOYED_CONTRACT_ADDRESS
 - Symbol: `CERR002`
 - Sale Value: 1.6B COP
 - Total Tokens: 1,600,000
-- 🇨🇴 Purchase Price: 1,000 COP per token
+- 🇨🇴 Purchase Price: 1 COP per token (simplified pricing)
 - Status: Ready for COP-based purchases
 
 **Property 3: PH Dúplex Rosales Premium**
@@ -146,7 +146,7 @@ npx hardhat verify --network base-sepolia DEPLOYED_CONTRACT_ADDRESS
 - Symbol: `ROSA003`
 - Sale Value: 2.1B COP
 - Total Tokens: 2,100,000
-- 🇨🇴 Purchase Price: 1,000 COP per token
+- 🇨🇴 Purchase Price: 1 COP per token (simplified pricing)
 - Status: Ready for COP-based purchases
 
 ### Infrastructure Contracts
@@ -175,10 +175,10 @@ npx hardhat verify --network base-sepolia DEPLOYED_CONTRACT_ADDRESS
 ```
 Property Sale Value: 240,000,000 COP (240M COP)
 Total Tokens: 240,000
-🇨🇴 Price per Token: 1,000 COP
-Minimum Investment: 1,000 COP (1 token)
+🇨🇴 Price per Token: 1 COP (simplified pricing)
+Minimum Investment: 1 COP (1 token)
 Ownership per Token: 0.000417% of property
-Required COP Tokens: 1,000 COP tokens per property token
+Required COP Tokens: 1 COP token per property token
 ```
 
 ## 🔒 Security Features
@@ -224,6 +224,15 @@ Required COP Tokens: 1,000 COP tokens per property token
 ```
 
 ## 🌐 Integration
+
+### Onchain Agent Integration
+
+The smart contracts are fully integrated with the MIIA onchain agent:
+
+- **AI-Powered Purchases**: Natural language interface for property token purchases
+- **Dynamic URL Support**: Automatic environment detection for production deployment
+- **Custom Tools**: Direct API integration bypassing LangChain-AgentKit issues
+- **Complete Flow**: Wallet creation → COP purchase → Property token purchase
 
 ### API Endpoints
 
@@ -272,7 +281,7 @@ The test demonstrates a complete tokenization workflow:
 
 💰 Testing COP-based token purchase...
    ✅ Identity registered for investor: 0x...
-   ✅ Required COP: 10,000,000 COP tokens
+   ✅ Required COP: 10,000 COP tokens
    ✅ Tokens purchased: 10000
    📊 Ownership percentage: 4.17%
 
@@ -286,7 +295,7 @@ The test demonstrates a complete tokenization workflow:
    🏭 Total supply: 23000
    🛍️  Available: 217000
    📊 Sold: 9.58%
-   🇨🇴 Total COP collected: 23M COP
+   🇨🇴 Total COP collected: 23K COP
 🎉 HACKATHON DEMO COMPLETED SUCCESSFULLY!
 ```
 
