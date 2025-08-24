@@ -1,0 +1,23 @@
+# Dockerfile simplificado para desarrollo rápido
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Crear requirements simplificado
+COPY requirements.simple.txt .
+RUN pip install --no-cache-dir -r requirements.simple.txt
+
+# Copiar aplicación
+COPY . .
+
+# Exponer puerto
+EXPOSE 8000
+
+# Comando por defecto
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

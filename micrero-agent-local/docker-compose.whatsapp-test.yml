@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  whatsapp-bot-test:
+    build: ./whatsapp-bot
+    ports:
+      - "3001:3001"
+    environment:
+      - API_URL=http://backend:8000
+      - SECRET_KEY=test-secret-key
+    volumes:
+      - ./data/whatsapp-sessions:/app/sessions
+      - ./data/logs:/app/logs
