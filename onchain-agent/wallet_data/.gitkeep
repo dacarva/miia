@@ -1,0 +1,3 @@
+# This file ensures the wallet_data directory is tracked in git
+# The actual wallet files are ignored via .gitignore
+# This allows the directory to exist for serverless deployments
