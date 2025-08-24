@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Colombian Real Estate Tokenization API",
-    "description": "Collection for testing the tokenized real estate investment platform with WhatsApp integration",
+    "description": "Collection for testing the tokenized real estate investment platform with enhanced COP token operations, blockchain confirmation waiting, and WhatsApp integration. Features 4-minute transaction confirmation timeout with early exit when confirmed.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -28,6 +28,41 @@
     {
       "key": "property_id",
       "value": "16418-M4614094",
+      "type": "string"
+    },
+    {
+      "key": "tokenized_property_1",
+      "value": "MIIA001",
+      "type": "string"
+    },
+    {
+      "key": "tokenized_property_2",
+      "value": "MIIA002",
+      "type": "string"
+    },
+    {
+      "key": "tokenized_property_3",
+      "value": "MIIA003",
+      "type": "string"
+    },
+    {
+      "key": "cop_small_amount",
+      "value": "50000",
+      "type": "string"
+    },
+    {
+      "key": "cop_medium_amount",
+      "value": "100000",
+      "type": "string"
+    },
+    {
+      "key": "cop_large_amount",
+      "value": "500000",
+      "type": "string"
+    },
+    {
+      "key": "cop_contract_address",
+      "value": "0xD1E0A2c64e7a1Db0b7455587c2b382C756c38f6E",
       "type": "string"
     }
   ],
@@ -119,6 +154,200 @@
               "raw": "{{base_url}}/api/properties",
               "host": ["{{base_url}}"],
               "path": ["api", "properties"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tokenization Platform Tests",
+      "item": [
+        {
+          "name": "List Tokenized Properties",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Muéstrame las propiedades tokenizadas disponibles\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Get Property Token Info - MIIA001",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Dame información detallada de la propiedad {{tokenized_property_1}}\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Get Property Token Info - MIIA002",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Dame información detallada de la propiedad {{tokenized_property_2}}\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Get Property Token Info - MIIA003",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Dame información detallada de la propiedad {{tokenized_property_3}}\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Purchase Property Tokens - Valid Amount",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Quiero comprar 1000 tokens de la propiedad {{tokenized_property_1}}\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Purchase Property Tokens - Below Minimum",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Quiero comprar 10 tokens de la propiedad {{tokenized_property_1}}\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Purchase Property Tokens - Large Investment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Quiero comprar 50000 tokens de la propiedad {{tokenized_property_2}}\",\n  \"phoneNumber\": \"{{colombian_user2}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Get User Token Holdings - Empty Portfolio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Muéstrame mi portafolio de tokens de propiedades\",\n  \"phoneNumber\": \"{{colombian_user3}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Get User Token Holdings - After Purchase",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Muéstrame mi portafolio de tokens de propiedades\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
             }
           }
         }
@@ -252,6 +481,48 @@
               "path": ["api", "agent"]
             }
           }
+        },
+        {
+          "name": "Tokenized Property Investment Interest",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Quiero invertir en propiedades tokenizadas\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Ask About Token Investment Minimum",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"¿Cuál es la inversión mínima para comprar tokens de propiedades?\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
         }
       ]
     },
@@ -325,6 +596,146 @@
               "path": ["api", "whatsapp"]
             }
           }
+        },
+        {
+          "name": "WhatsApp Message - Token Investment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entry\": [{\n    \"changes\": [{\n      \"value\": {\n        \"messages\": [{\n          \"from\": \"{{colombian_user1}}\",\n          \"text\": {\"body\": \"Quiero comprar tokens de la propiedad MIIA001\"},\n          \"type\": \"text\"\n        }]\n      }\n    }]\n  }]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/whatsapp",
+              "host": ["{{base_url}}"],
+              "path": ["api", "whatsapp"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Enhanced COP Token Operations",
+      "item": [
+        {
+          "name": "Test COP Purchase with Confirmation Wait",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/test-cop-purchase",
+              "host": ["{{base_url}}"],
+              "path": ["api", "test-cop-purchase"]
+            },
+            "description": "Direct test of COP token purchase with 4-minute confirmation timeout. Returns immediately when confirmed or after timeout. Recent successful transactions: 0xb40a44cdf6351fba1eb0f7cacb7cfa6055b753d9596fea7422561f8fc75972c9 (confirmed in ~4 seconds), 0xf7da705be495f5fbb6842e86a5b64bc6950978e86a95a582db86a15cd81328da (timeout but successful)."
+          }
+        },
+        {
+          "name": "Debug Blockchain Interactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/debug-blockchain",
+              "host": ["{{base_url}}"],
+              "path": ["api", "debug-blockchain"]
+            },
+            "description": "Debug blockchain connectivity, reads, and transaction preparation without LLM prompts."
+          }
+        },
+        {
+          "name": "Purchase COP with Confirmation Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Quiero comprar {{cop_medium_amount}} tokens COP y esperar hasta que la transacción se confirme completamente en blockchain\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            },
+            "description": "Test COP purchase through LLM with explicit confirmation request. May take up to 4 minutes for full confirmation."
+          }
+        },
+        {
+          "name": "Purchase COP - Small Amount",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Necesito comprar {{cop_small_amount}} tokens COP para empezar a invertir\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            },
+            "description": "Purchase smaller amount of COP tokens with educational guidance about minimum investment requirements."
+          }
+        },
+        {
+          "name": "Check COP Balance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"¿Cuál es mi saldo actual de tokens COP?\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            },
+            "description": "Check current COP token balance through LLM interface."
+          }
+        },
+        {
+          "name": "Purchase COP - Large Investment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Quiero comprar {{cop_large_amount}} tokens COP para invertir en propiedades tokenizadas. Espera la confirmación completa por favor.\",\n  \"phoneNumber\": \"{{colombian_user2}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            },
+            "description": "Purchase large amount of COP tokens (above minimum investment threshold) with confirmation waiting."
+          }
         }
       ]
     },
@@ -349,13 +760,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/wallets?phoneNumber={{user1_phone}}",
+              "raw": "{{base_url}}/api/wallets?phoneNumber={{colombian_user1}}",
               "host": ["{{base_url}}"],
               "path": ["api", "wallets"],
               "query": [
                 {
                   "key": "phoneNumber",
-                  "value": "{{user1_phone}}"
+                  "value": "{{colombian_user1}}"
                 }
               ]
             }
@@ -367,13 +778,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/wallets?phoneNumber={{user2_phone}}",
+              "raw": "{{base_url}}/api/wallets?phoneNumber={{colombian_user2}}",
               "host": ["{{base_url}}"],
               "path": ["api", "wallets"],
               "query": [
                 {
                   "key": "phoneNumber",
-                  "value": "{{user2_phone}}"
+                  "value": "{{colombian_user2}}"
                 }
               ]
             }
@@ -385,15 +796,104 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/wallets?phoneNumber={{user3_phone}}",
+              "raw": "{{base_url}}/api/wallets?phoneNumber={{colombian_user3}}",
               "host": ["{{base_url}}"],
               "path": ["api", "wallets"],
               "query": [
                 {
                   "key": "phoneNumber",
-                  "value": "{{user3_phone}}"
+                  "value": "{{colombian_user3}}"
                 }
               ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tokenization Error Testing",
+      "item": [
+        {
+          "name": "Invalid Property ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Dame información de la propiedad INVALID123\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Purchase Tokens Invalid Property",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Quiero comprar 1000 tokens de la propiedad INVALID123\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Purchase Tokens Negative Amount",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Quiero comprar -100 tokens de la propiedad {{tokenized_property_1}}\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Get Holdings Invalid Phone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Muéstrame mi portafolio de tokens\",\n  \"phoneNumber\": \"invalid-phone\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
             }
           }
         }

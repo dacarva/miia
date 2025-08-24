@@ -19,7 +19,7 @@ export interface PropertyInvestmentParams {
 }
 
 class PropertyActionProvider extends ActionProvider<WalletProvider> {
-  supportsNetwork(network: string): boolean {
+  supportsNetwork(network: any): boolean {
     // Support all networks for property data access
     return true;
   }

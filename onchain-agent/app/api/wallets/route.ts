@@ -14,8 +14,24 @@ export async function GET(req: Request): Promise<NextResponse> {
     const phoneNumber = searchParams.get('phoneNumber');
 
     if (phoneNumber) {
+      // Handle URL encoding - the + gets converted to space, so we need to restore it
+      let decodedPhoneNumber = phoneNumber.trim();
+      
+      // If the phone number starts with a space and then digits, it's likely a + that got converted
+      if (decodedPhoneNumber.startsWith(' ') && /^\s\d+$/.test(decodedPhoneNumber)) {
+        decodedPhoneNumber = '+' + decodedPhoneNumber.trim();
+      }
+      
+      // If the phone number doesn't start with + but is all digits, add the +
+      if (!decodedPhoneNumber.startsWith('+') && /^\d+$/.test(decodedPhoneNumber)) {
+        decodedPhoneNumber = '+' + decodedPhoneNumber;
+      }
+      
+      console.log(`Original phone number: "${phoneNumber}"`);
+      console.log(`Processed phone number: "${decodedPhoneNumber}"`);
+      
       // Get specific wallet
-      const wallet = await getWallet(phoneNumber);
+      const wallet = await getWallet(decodedPhoneNumber);
       if (!wallet) {
         return NextResponse.json(
           { error: `Wallet not found for phone number: ${phoneNumber}` },
@@ -64,7 +80,23 @@ export async function DELETE(req: Request): Promise<NextResponse> {
       );
     }
 
-    const success = await deleteWallet(phoneNumber);
+    // Handle URL encoding - the + gets converted to space, so we need to restore it
+    let decodedPhoneNumber = phoneNumber.trim();
+    
+    // If the phone number starts with a space and then digits, it's likely a + that got converted
+    if (decodedPhoneNumber.startsWith(' ') && /^\s\d+$/.test(decodedPhoneNumber)) {
+      decodedPhoneNumber = '+' + decodedPhoneNumber.trim();
+    }
+    
+    // If the phone number doesn't start with + but is all digits, add the +
+    if (!decodedPhoneNumber.startsWith('+') && /^\d+$/.test(decodedPhoneNumber)) {
+      decodedPhoneNumber = '+' + decodedPhoneNumber;
+    }
+    
+    console.log(`DELETE - Original phone number: "${phoneNumber}"`);
+    console.log(`DELETE - Processed phone number: "${decodedPhoneNumber}"`);
+
+    const success = await deleteWallet(decodedPhoneNumber);
     
     if (success) {
       return NextResponse.json({ message: `Wallet for ${phoneNumber} deleted successfully` });

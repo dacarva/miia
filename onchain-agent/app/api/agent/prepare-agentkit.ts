@@ -9,6 +9,7 @@ import {
   wethActionProvider,
 } from "@coinbase/agentkit";
 import { propertyActionProvider } from "./property-action-provider";
+import { tokenActionProvider } from "./token-action-provider";
 import * as fs from "fs";
 import { Address, Hex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
@@ -59,9 +60,10 @@ type WalletData = {
  * @returns boolean indicating if valid
  */
 function isValidPhoneNumber(phoneNumber: string): boolean {
-  // Must start with + and contain 7-15 digits
+  // Trim whitespace and must start with + and contain 7-15 digits
+  const trimmedPhone = phoneNumber.trim();
   const phoneRegex = /^\+[1-9]\d{6,14}$/;
-  return phoneRegex.test(phoneNumber);
+  return phoneRegex.test(trimmedPhone);
 }
 
 /**
@@ -100,9 +102,10 @@ export async function prepareAgentkitAndWalletProvider(
   }
 
   // Validate phone number if provided
-  if (phoneNumber && !isValidPhoneNumber(phoneNumber)) {
+  const trimmedPhone = phoneNumber?.trim();
+  if (trimmedPhone && !isValidPhoneNumber(trimmedPhone)) {
     throw new Error(
-      `Invalid phone number format: ${phoneNumber}. Please use international format (e.g., +1234567890)`
+      `Invalid phone number format: ${trimmedPhone}. Please use international format (e.g., +1234567890)`
     );
   }
 
@@ -115,8 +118,8 @@ export async function prepareAgentkitAndWalletProvider(
   let privateKey: Hex | null = null;
 
   // Determine wallet file path
-  const walletFileName = phoneNumber 
-    ? `wallet_${sanitizePhoneNumber(phoneNumber)}.json` 
+  const walletFileName = trimmedPhone 
+    ? `wallet_${sanitizePhoneNumber(trimmedPhone)}.json` 
     : "default_wallet.json";
   const walletFilePath = `${WALLET_DATA_DIR}/${walletFileName}`;
 
@@ -164,6 +167,7 @@ export async function prepareAgentkitAndWalletProvider(
         erc20ActionProvider(),
         cdpApiActionProvider(),
         propertyActionProvider(),
+        tokenActionProvider(),
       ],
     });
 
@@ -172,7 +176,7 @@ export async function prepareAgentkitAndWalletProvider(
     const newWalletData: WalletData = {
       privateKey,
       smartWalletAddress: smartWalletAddress as Address,
-      phoneNumber: phoneNumber || "default",
+      phoneNumber: trimmedPhone || "default",
       createdAt: walletData?.createdAt || new Date().toISOString(),
       lastUsed: new Date().toISOString(),
     };
@@ -218,11 +222,12 @@ export async function listWallets(): Promise<WalletData[]> {
  * @returns {Promise<WalletData | null>} Wallet data or null if not found
  */
 export async function getWallet(phoneNumber: string): Promise<WalletData | null> {
-  if (!isValidPhoneNumber(phoneNumber)) {
-    throw new Error(`Invalid phone number format: ${phoneNumber}`);
+  const trimmedPhone = phoneNumber.trim();
+  if (!isValidPhoneNumber(trimmedPhone)) {
+    throw new Error(`Invalid phone number format: ${trimmedPhone}`);
   }
 
-  const walletFileName = `wallet_${sanitizePhoneNumber(phoneNumber)}.json`;
+  const walletFileName = `wallet_${sanitizePhoneNumber(trimmedPhone)}.json`;
   const walletFilePath = `${WALLET_DATA_DIR}/${walletFileName}`;
   
   if (fs.existsSync(walletFilePath)) {
@@ -244,11 +249,12 @@ export async function getWallet(phoneNumber: string): Promise<WalletData | null>
  * @returns {Promise<boolean>} Success status
  */
 export async function deleteWallet(phoneNumber: string): Promise<boolean> {
-  if (!isValidPhoneNumber(phoneNumber)) {
-    throw new Error(`Invalid phone number format: ${phoneNumber}`);
+  const trimmedPhone = phoneNumber.trim();
+  if (!isValidPhoneNumber(trimmedPhone)) {
+    throw new Error(`Invalid phone number format: ${trimmedPhone}`);
   }
 
-  const walletFileName = `wallet_${sanitizePhoneNumber(phoneNumber)}.json`;
+  const walletFileName = `wallet_${sanitizePhoneNumber(trimmedPhone)}.json`;
   const walletFilePath = `${WALLET_DATA_DIR}/${walletFileName}`;
   
   if (fs.existsSync(walletFilePath)) {
@@ -270,11 +276,12 @@ export async function deleteWallet(phoneNumber: string): Promise<boolean> {
  * @returns {Promise<boolean>} Success status
  */
 export async function updateWalletLastUsed(phoneNumber: string): Promise<boolean> {
-  if (!isValidPhoneNumber(phoneNumber)) {
-    throw new Error(`Invalid phone number format: ${phoneNumber}`);
+  const trimmedPhone = phoneNumber.trim();
+  if (!isValidPhoneNumber(trimmedPhone)) {
+    throw new Error(`Invalid phone number format: ${trimmedPhone}`);
   }
 
-  const walletFileName = `wallet_${sanitizePhoneNumber(phoneNumber)}.json`;
+  const walletFileName = `wallet_${sanitizePhoneNumber(trimmedPhone)}.json`;
   const walletFilePath = `${WALLET_DATA_DIR}/${walletFileName}`;
   
   if (fs.existsSync(walletFilePath)) {
