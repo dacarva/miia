@@ -199,9 +199,61 @@ miia/
 - **GDPR Compliance** - Protección de datos personales
 - **ERC-3643 T-REX** - Tokenización regulada
 
+### 🤖 AGENTE WHATSAPP BUSINESS API
+- **Integración WhatsApp Business**: Bot empresarial con API oficial de Meta
+- **Procesamiento de mensajes en tiempo real**: Respuestas automáticas con IA
+- **Sistema de logging estructurado**: Winston para tracking de mensajes
+- **Rate limiting y seguridad**: Helmet, CORS y protección contra spam
+- **Webhook verification**: Validación de firma SHA-256 para seguridad
+- **Fallback automático**: Respuestas de contingencia en caso de errores
+- **Monitoreo en tiempo real**: Endpoints de salud y estadísticas
+- **Base de datos PostgreSQL**: Almacenamiento de conversaciones y usuarios
+- **Redis caching**: Sesiones y datos en memoria
+- **Ollama LLM local**: Modelos de lenguaje ejecutados localmente
+
 ---
 
 ## 🚀 INICIO RÁPIDO
+
+### 🐳 Docker Compose (Agente Local)
+Para desplegar el agente local de WhatsApp con todos los servicios:
+
+```bash
+cd micrero-agent-local
+docker-compose up -d
+```
+
+**Servicios incluidos:**
+- ✅ PostgreSQL con esquema preconfigurado
+- ✅ Redis para caching y sesiones
+- ✅ Ollama LLM server local
+- ✅ Backend FastAPI con agentes de IA
+- ✅ WhatsApp Business API bot
+- ✅ Frontend dashboard Streamlit
+- ✅ Nginx reverse proxy
+- ✅ Celery workers para tareas async
+
+**Variables de entorno requeridas:**
+```bash
+DB_PASSWORD=tu_password_postgres
+REDIS_PASSWORD=tu_password_redis  
+SECRET_KEY=tu_clave_secreta_jwt
+WHATSAPP_ACCESS_TOKEN=token_meta_business
+WHATSAPP_PHONE_NUMBER_ID=id_numero_whatsapp
+WHATSAPP_VERIFY_TOKEN=token_verificacion
+```
+
+### 🧪 Testing de Integración WhatsApp
+```bash
+# Probar configuración de WhatsApp API
+python test_whatsapp_integration.py
+
+# Probar envío de mensajes
+python test_whatsapp_send.py
+
+# Test completo del sistema
+python test_complete_system.py
+```
 
 ### Prerrequisitos
 - Node.js 18+
@@ -209,6 +261,46 @@ miia/
 - Credenciales CDP API (Coinbase)
 - API Key de OpenAI
 - Acceso a Base Sepolia testnet
+
+### 🐳 Docker Compose (Agente Local)
+Para desplegar el agente local de WhatsApp con todos los servicios:
+
+```bash
+cd micrero-agent-local
+docker-compose up -d
+```
+
+**Servicios incluidos:**
+- ✅ PostgreSQL con esquema preconfigurado
+- ✅ Redis para caching y sesiones
+- ✅ Ollama LLM server local
+- ✅ Backend FastAPI con agentes de IA
+- ✅ WhatsApp Business API bot
+- ✅ Frontend dashboard Streamlit
+- ✅ Nginx reverse proxy
+- ✅ Celery workers para tareas async
+
+**Variables de entorno requeridas:**
+```bash
+DB_PASSWORD=tu_password_postgres
+REDIS_PASSWORD=tu_password_redis  
+SECRET_KEY=tu_clave_secreta_jwt
+WHATSAPP_ACCESS_TOKEN=token_meta_business
+WHATSAPP_PHONE_NUMBER_ID=id_numero_whatsapp
+WHATSAPP_VERIFY_TOKEN=token_verificacion
+```
+
+### 🧪 Testing de Integración WhatsApp
+```bash
+# Probar configuración de WhatsApp API
+python test_whatsapp_integration.py
+
+# Probar envío de mensajes
+python test_whatsapp_send.py
+
+# Test completo del sistema
+python test_complete_system.py
+```
 
 ### Instalación Completa
 
@@ -255,6 +347,33 @@ NEXT_PUBLIC_BASE_URL=https://your-app.vercel.app
 ---
 
 ## 🏠 PROPIEDADES TOKENIZADAS DISPONIBLES
+
+### 🗺️ MAPA INTERACTIVO MEJORADO
+**Nuevas características en `/data/generate_colombia_map.py`:**
+- 🌍 **GeoJSON dinámico**: Mapa completo de Colombia con polígonos
+- 🎨 **Paleta de colores personalizada**: Esquema visual consistente
+- 📊 **Tooltips enriquecidos**: Información detallada en hover
+- 📈 **Estadísticas automáticas**: Distribución por segmentos y ciudades
+- 📱 **Responsive design**: Compatible con dispositivos móviles
+- ⚡ **Renderizado optimizado**: 60fps para experiencia fluida
+
+**Ejecutar generación del mapa:**
+```bash
+cd data
+python generate_colombia_map.py
+```
+
+**Archivos generados:**
+- `colombia_properties_map.html` - Mapa interactivo completo
+- Estadísticas de segmentación automática
+- Visualización de distribución geográfica
+
+**Características técnicas:**
+- Procesamiento de 401 propiedades con coordenadas válidas
+- Cobertura de 43 ciudades en todo Colombia
+- 5 segmentos de mercado identificados automáticamente
+- Paleta de colores personalizada para mejor visualización
+- Tooltips con información completa de cada propiedad
 
 ### En Base Sepolia Testnet
 
@@ -399,11 +518,79 @@ npx hardhat run scripts/deploy-property-1-simple.js --network base-sepolia
 
 ### Contratos Desplegados (Base Sepolia)
 
+### 🔄 ACTUALIZACIONES DE CONTRATOS
+**Nuevas propiedades tokenizadas en Base Sepolia:**
+```json
+{
+  "MIIA001": {
+    "name": "Apartaestudio en Venta, La Julita, Pereira",
+    "symbol": "LAJU001",
+    "tokenAddress": "0x05C9d708CcAa1296247E04312b199Fd285de1aA0",
+    "totalValue": "240.0 ETH",
+    "totalTokens": 240000
+  },
+  "MIIA002": {
+    "name": "Apartamento en Venta y Arriendo, CERRITOS, Pereira", 
+    "symbol": "CERR002",
+    "tokenAddress": "0xF8A82FE1a182C8dD4FaD980972066A4C1780194b",
+    "totalValue": "1600.0 ETH",
+    "totalTokens": 1600000
+  },
+  "MIIA003": {
+    "name": "PH dúplex Clásico en Rosales Alto, Bogotá",
+    "symbol": "ROSA003", 
+    "tokenAddress": "0xD25a133AfE32B5e1519f0f174e9c2a3132c1bf9C",
+    "totalValue": "2100.0 ETH",
+    "totalTokens": 2100000
+  }
+}
+```
+
+**Registros de compliance ERC-3643:**
+- `TrustedIssuersRegistry`: 0xF33838f6c85cFF9667a29B871592c74A053C89cd
+- `ClaimTopicsRegistry`: 0x203C4b26035fC20CAb92085B121EfFc8fbf533Ce
+- `IdentityRegistryStorage`: 0xE7538210aE32183Fc72753c3F793699a0d16620a
+- `IdentityRegistry`: 0x8A3477a1c197fA0565C279bcae784b9d5eC93B34
+
 **Infraestructura:**
 - TrustedIssuersRegistry: `0xF33838f6c85cFF9667a29B871592c74A053C89cd`
 - ClaimTopicsRegistry: `0x203C4b26035fC20CAb92085B121EfFc8fbf533Ce`
 - IdentityRegistryStorage: `0xE7538210aE32183Fc72753c3F793699a0d16620a`
 - IdentityRegistry: `0x8A3477a1c197fA0565C279bcae784b9d5eC93B34`
+
+### 🔄 ACTUALIZACIONES DE CONTRATOS
+**Nuevas propiedades tokenizadas en Base Sepolia:**
+```json
+{
+  "MIIA001": {
+    "name": "Apartaestudio en Venta, La Julita, Pereira",
+    "symbol": "LAJU001",
+    "tokenAddress": "0x05C9d708CcAa1296247E04312b199Fd285de1aA0",
+    "totalValue": "240.0 ETH",
+    "totalTokens": 240000
+  },
+  "MIIA002": {
+    "name": "Apartamento en Venta y Arriendo, CERRITOS, Pereira", 
+    "symbol": "CERR002",
+    "tokenAddress": "0xF8A82FE1a182C8dD4FaD980972066A4C1780194b",
+    "totalValue": "1600.0 ETH",
+    "totalTokens": 1600000
+  },
+  "MIIA003": {
+    "name": "PH dúplex Clásico en Rosales Alto, Bogotá",
+    "symbol": "ROSA003", 
+    "tokenAddress": "0xD25a133AfE32B5e1519f0f174e9c2a3132c1bf9C",
+    "totalValue": "2100.0 ETH",
+    "totalTokens": 2100000
+  }
+}
+```
+
+**Registros de compliance ERC-3643:**
+- `TrustedIssuersRegistry`: 0xF33838f6c85cFF9667a29B871592c74A053C89cd
+- `ClaimTopicsRegistry`: 0x203C4b26035fC20CAb92085B121EfFc8fbf533Ce
+- `IdentityRegistryStorage`: 0xE7538210aE32183Fc72753c3F793699a0d16620a
+- `IdentityRegistry`: 0x8A3477a1c197fA0565C279bcae784b9d5eC93B34
 
 ---
 
@@ -471,6 +658,36 @@ Importar `onchain-agent/postman_collection.json` para acceder a:
 ---
 
 ## 🚀 DEPLOYMENT EN PRODUCCIÓN
+
+### 📱 WHATSAPP BUSINESS API DEPLOYMENT
+**Configuración para producción:**
+```javascript
+// Variables de entorno requeridas
+WHATSAPP_ACCESS_TOKEN=EAALw...  // Token de Meta Business
+WHATSAPP_PHONE_NUMBER_ID=123456789012345  // ID del número empresarial
+WHATSAPP_VERIFY_TOKEN=mi_token_secreto_verificacion
+WHATSAPP_MY_NUMBER=+573001234567  // Número para testing
+
+// Configuración de webhook en Meta Developer
+// URL: https://tudominio.com/webhook
+// Verify Token: mi_token_secreto_verificacion
+```
+
+**Endpoints de monitoreo:**
+- `GET /status` - Estado de conexión y estadísticas
+- `GET /health` - Verificación de salud del servicio
+- `POST /send-message` - Envío manual de mensajes (testing)
+- `POST /test-message` - Mensaje de prueba automático
+
+**Características de seguridad:**
+- ✅ Validación de firma SHA-256 en webhooks
+- ✅ Rate limiting (100 requests/15min)
+- ✅ Helmet.js para headers de seguridad
+- ✅ CORS configurado para dominios autorizados
+- ✅ Logging estructurado con Winston
+- ✅ Middleware de autenticación JWT
+- ✅ Validación de payloads JSON
+- ✅ Protección contra inyección SQL
 
 ### Configuración para Vercel
 
@@ -592,6 +809,36 @@ Para documentación sobre:
 ---
 
 ## 🤝 CONTRIBUIR
+
+### 🎯 ÁREAS DE DESARROLLO ACTIVO
+
+**1. Agente WhatsApp Business API**
+- Integración con Meta Business API
+- Procesamiento de mensajes en tiempo real
+- Sistema de templates y respuestas automáticas
+- Base de datos PostgreSQL para conversaciones
+- Redis para caching de sesiones
+- Ollama LLM para procesamiento local
+
+**2. Mapa Interactivo Mejorado**
+- Generación automática de mapas con Plotly
+- GeoJSON dinámico para Colombia
+- Tooltips enriquecidos con información de propiedades
+- Estadísticas automáticas de segmentación
+- Visualización de distribución geográfica
+
+**3. Contratos Inteligentes Actualizados**
+- Nuevas propiedades tokenizadas en Base Sepolia
+- Registros de compliance ERC-3643
+- Integración con Colombian COP stablecoin
+- Sistema de identidad y permisos
+
+**4. Docker Compose Local**
+- Stack completo para desarrollo local
+- PostgreSQL, Redis, Ollama LLM
+- Servicios interconectados con networking
+- Configuración simplificada con variables de entorno
+- Monitoreo y logging centralizado
 
 ### Flujo de Desarrollo
 
