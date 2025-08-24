@@ -558,6 +558,9 @@ npx hardhat run scripts/deploy-property-1-simple.js --network base-sepolia
 - IdentityRegistryStorage: `0xE7538210aE32183Fc72753c3F793699a0d16620a`
 - IdentityRegistry: `0x8A3477a1c197fA0565C279bcae784b9d5eC93B34`
 
+**Transacción Verificada en video**
+Tx: https://sepolia.basescan.org/tx/0xe89a6b5d3a04bda75bba0b5825c1d0a5efade2de67e68c041d21b2f7ae8d439c
+
 ### 🔄 ACTUALIZACIONES DE CONTRATOS
 **Nuevas propiedades tokenizadas en Base Sepolia:**
 ```json
