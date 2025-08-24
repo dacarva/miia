@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # WhatsApp Bot simplificado
+  whatsapp-bot:
+    build: ./whatsapp-bot
+    restart: unless-stopped
+    environment:
+      - API_URL=http://backend:8000
+      - SECRET_KEY=${SECRET_KEY}
+    env_file:
+      - .env
+    volumes:
+      - ./data/whatsapp-sessions:/app/sessions
+      - ./data/logs:/app/logs
+    ports:
+      - "3001:3001"
+
+  # Backend simplificado
+  backend-simple:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.simple
+    restart: unless-stopped
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data/logs:/app/logs
