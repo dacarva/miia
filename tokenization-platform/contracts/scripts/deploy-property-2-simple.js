@@ -1,5 +1,8 @@
 const hre = require("hardhat");
 
+// Helper function to wait
+const wait = (seconds) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
+
 async function main() {
   console.log("🚀 Deploying MIIA Property 2 - Zona Rosa House (Simple)...\n");
 
@@ -16,9 +19,15 @@ async function main() {
     process.exit(1);
   }
 
-  const [deployer, investor1, investor2] = await hre.ethers.getSigners();
+  const [deployer] = await hre.ethers.getSigners();
+  
+  // For testnet deployment, use deployer account as all roles
+  const investor1 = deployer;
+  const investor2 = deployer;
+  
   console.log("Deploying with account:", deployer.address);
   console.log("Account balance:", hre.ethers.formatEther(await hre.ethers.provider.getBalance(deployer.address)));
+  console.log("Note: Using deployer account for all investor roles in testnet");
 
   // Get existing contracts
   console.log("\n🔗 Connecting to existing infrastructure...");
@@ -30,8 +39,11 @@ async function main() {
   const SimpleComplianceFactory = await hre.ethers.getContractFactory("SimpleCompliance");
   const compliance2 = await SimpleComplianceFactory.deploy();
   await compliance2.waitForDeployment();
+  console.log("   🔄 Waiting before initializing SimpleCompliance...");
+  await wait(5);
   await compliance2.init();
   console.log("   ✅ SimpleCompliance for Property 2:", await compliance2.getAddress());
+  await wait(5);
 
   // Step 2: Deploy Property Token 2 directly
   console.log("\n🏠 Step 2: Deploying Property 2 Token - Zona Rosa House...");
@@ -40,8 +52,10 @@ async function main() {
   const propertyToken2 = await PropertyTokenFactory.deploy();
   await propertyToken2.waitForDeployment();
   console.log("   ✅ PropertyToken deployed at:", await propertyToken2.getAddress());
+  await wait(5);
 
   // Initialize the T-REX token
+  console.log("   🔄 Initializing PropertyToken...");
   await propertyToken2.init(
     await identityRegistry.getAddress(),
     await compliance2.getAddress(),
@@ -51,6 +65,7 @@ async function main() {
     deployer.address
   );
   console.log("   ✅ PropertyToken initialized");
+  await wait(5);
 
   // Initialize property details
   const propertyDetails = {
@@ -63,50 +78,18 @@ async function main() {
     documentHash: "QmPK2s5KvE8H6YMxb6u7Ju8LvHq9KJng7RqD3F2mWxC1pZ"
   };
 
+  console.log("   🔄 Initializing property details...");
   await propertyToken2.initializeProperty(propertyDetails);
   console.log("   ✅ Property details initialized");
 
-  // Step 3: Demo purchases for Property 2
-  console.log("\n👤 Step 3: Setting Up Purchases for Property 2...");
-  
-  // Set up KYC for this property's compliance (each property has its own compliance)
-  await compliance2.updateKYC(investor1.address, true);
-  await compliance2.updateKYC(investor2.address, true);
-  console.log("   ✅ KYC verified for Property 2");
-  
-  // Note: Identities are already registered in the shared identity registry from Property 1
-  console.log("   ✅ Using existing identity registrations");
-  
-  // Add deployer as agent to this property token  
-  await propertyToken2.addAgent(deployer.address);
-  
-  // Execute purchases - different amounts for variety
-  const purchase1 = 16000; // 2% of 800k tokens
-  const purchase2 = 24000; // 3% of 800k tokens
-  
-  await propertyToken2.purchaseShares(investor1.address, purchase1);
-  await propertyToken2.purchaseShares(investor2.address, purchase2);
-  
-  console.log(`   💰 Investor 1 purchased: ${purchase1} tokens (2%)`);
-  console.log(`   💰 Investor 2 purchased: ${purchase2} tokens (3%)`);
-
-  // Step 4: Summary
-  const totalSupply = await propertyToken2.totalSupply();
-  const availableTokens = await propertyToken2.getAvailableTokens();
-  const investor1Balance = await propertyToken2.balanceOf(investor1.address);
-  const investor2Balance = await propertyToken2.balanceOf(investor2.address);
-  
-  console.log("\n🎯 === PROPERTY 2 DEPLOYED ===");
+  // Step 3: Summary (Skip investor demo for testnet)
+  console.log("\n🎯 === PROPERTY 2 DEPLOYED TO TESTNET ===");
   console.log("📊 Property Summary:");
   console.log(`   Property: Casa Zona Rosa Bogotá (MIIA002)`);
   console.log(`   Token Address: ${await propertyToken2.getAddress()}`);
-  console.log(`   Total Supply: ${totalSupply.toString()} tokens`);
-  console.log(`   Available: ${availableTokens.toString()} tokens`);
-  console.log(`   Sold: ${((Number(totalSupply) / Number(propertyDetails.totalTokens)) * 100).toFixed(2)}%`);
-  console.log("");
-  console.log("👥 Investor Balances:");
-  console.log(`   Investor 1: ${investor1Balance.toString()} tokens (${((Number(investor1Balance) / Number(propertyDetails.totalTokens)) * 100).toFixed(4)}%)`);
-  console.log(`   Investor 2: ${investor2Balance.toString()} tokens (${((Number(investor2Balance) / Number(propertyDetails.totalTokens)) * 100).toFixed(4)}%)`);
+  console.log(`   Total Value: ${hre.ethers.formatEther(propertyDetails.totalValue)} ETH`);
+  console.log(`   Total Tokens: ${propertyDetails.totalTokens.toLocaleString()}`);
+  console.log(`   Status: Ready for demo purchases`);
 
   // Update deployment info
   deploymentInfo.timestamp = new Date().toISOString();
@@ -117,8 +100,8 @@ async function main() {
     complianceAddress: await compliance2.getAddress(),
     totalValue: hre.ethers.formatEther(propertyDetails.totalValue) + " ETH",
     totalTokens: Number(propertyDetails.totalTokens),
-    soldTokens: Number(totalSupply),
-    availableTokens: Number(availableTokens)
+    soldTokens: 0, // No demo purchases on testnet
+    availableTokens: Number(propertyDetails.totalTokens)
   };
 
   fs.writeFileSync(fileName, JSON.stringify(deploymentInfo, null, 2));
