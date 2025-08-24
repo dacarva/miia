@@ -1,0 +1,261 @@
+{
+  "name": "WhatsApp AI Bot with PostgreSQL Memory",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-webhook",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [250, 300],
+      "webhookId": "whatsapp-incoming"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.body }}",
+        "options": {}
+      },
+      "name": "Parse WhatsApp Data",
+      "type": "n8n-nodes-base.set",
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer datos del mensaje de WhatsApp\nconst body = $input.first().json;\n\n// Verificar si es un mensaje válido\nif (body.entry && body.entry[0].changes && body.entry[0].changes[0].value.messages) {\n  const message = body.entry[0].changes[0].value.messages[0];\n  const contact = body.entry[0].changes[0].value.contacts[0];\n  \n  return {\n    messageId: message.id,\n    from: message.from,\n    timestamp: message.timestamp,\n    text: message.text?.body || '',\n    type: message.type,\n    contactName: contact?.profile?.name || 'Usuario',\n    sessionId: `whatsapp_${message.from}`,\n    chatInput: message.text?.body || ''\n  };\n} else if (body.hub && body.hub.verify_token) {\n  // Es una verificación del webhook\n  return {\n    verifyToken: body.hub.verify_token,\n    challenge: body.hub.challenge,\n    mode: body.hub.mode\n  };\n}\n\nreturn { error: 'Invalid WhatsApp message format' };"
+      },
+      "name": "Extract Message Data",
+      "type": "n8n-nodes-base.code",
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.verifyToken }}",
+              "value2": "my_verify_token_123"
+            }
+          ]
+        }
+      },
+      "name": "IF Verification",
+      "type": "n8n-nodes-base.if",
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "response",
+              "value": "={{ $json.challenge }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Return Challenge",
+      "type": "n8n-nodes-base.set",
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "resource": "chatMessageAssistant",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4-mini",
+          "mode": "list"
+        },
+        "text": "={{ $json.chatInput }}",
+        "simplifyOutput": true,
+        "options": {
+          "temperature": 0.7,
+          "systemMessage": "Eres un asistente útil de WhatsApp. Responde de manera concisa y amigable."
+        }
+      },
+      "name": "OpenAI Chat",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [1050, 400],
+      "credentials": {
+        "openAiApi": {
+          "id": "1",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Crear tabla si no existe\nCREATE TABLE IF NOT EXISTS n8n_chat_histories (\n  id SERIAL PRIMARY KEY,\n  session_id VARCHAR(255),\n  role VARCHAR(50),\n  content TEXT,\n  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\n-- Insertar mensaje del usuario\nINSERT INTO n8n_chat_histories (session_id, role, content)\nVALUES ('{{ $json.sessionId }}', 'user', '{{ $json.chatInput }}');\n\n-- Obtener últimos 5 mensajes para contexto\nSELECT role, content FROM n8n_chat_histories\nWHERE session_id = '{{ $json.sessionId }}'\nORDER BY timestamp DESC\nLIMIT 5;",
+        "options": {}
+      },
+      "name": "Store in PostgreSQL",
+      "type": "n8n-nodes-base.postgres",
+      "position": [1250, 400],
+      "credentials": {
+        "postgres": {
+          "id": "2",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "operation": "send",
+        "phoneNumberId": "722464224291615",
+        "recipientPhoneNumber": "={{ $node['Extract Message Data'].json.from }}",
+        "messageType": "text",
+        "text": "={{ $node['OpenAI Chat'].json.text }}"
+      },
+      "name": "Send WhatsApp Message",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [1450, 400],
+      "credentials": {
+        "whatsAppApi": {
+          "id": "3",
+          "name": "WhatsApp Business"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Guardar respuesta del asistente\nINSERT INTO n8n_chat_histories (session_id, role, content)\nVALUES ('{{ $node['Extract Message Data'].json.sessionId }}', 'assistant', '{{ $node['OpenAI Chat'].json.text }}');",
+        "options": {}
+      },
+      "name": "Store AI Response",
+      "type": "n8n-nodes-base.postgres",
+      "position": [1650, 400],
+      "credentials": {
+        "postgres": {
+          "id": "2",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [1850, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse WhatsApp Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse WhatsApp Data": {
+      "main": [
+        [
+          {
+            "node": "Extract Message Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Message Data": {
+      "main": [
+        [
+          {
+            "node": "IF Verification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Verification": {
+      "main": [
+        [
+          {
+            "node": "Return Challenge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OpenAI Chat",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Store in PostgreSQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Return Challenge": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store in PostgreSQL": {
+      "main": [
+        []
+      ]
+    },
+    "Send WhatsApp Message": {
+      "main": [
+        [
+          {
+            "node": "Store AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store AI Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
