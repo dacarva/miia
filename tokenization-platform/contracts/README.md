@@ -1,24 +1,22 @@
 # MIIA - Colombian Real Estate Tokenization Platform
 
-Smart contracts for tokenizing Colombian real estate properties using ERC-3643 T-REX standard for regulatory compliance.
+Smart contracts for tokenizing Colombian real estate properties using ERC-3643 T-REX standard for regulatory compliance. **Hackathon Version** - Simplified for demonstration purposes.
 
 ## 🏗️ Architecture
 
 ### Core Contracts
 
 - **PropertyToken.sol**: ERC-3643 compliant token representing fractional ownership of a property
-- **ColombianCompliance.sol**: Compliance module enforcing Colombian securities regulations
-- **PropertyTokenFactory.sol**: Factory for creating property tokens with compliance setup
-- **FractionalPurchase.sol**: Handles fractional property purchases with platform fees
-- **PortfolioTracker.sol**: Tracks investor portfolios and investment performance
+- **SimpleCompliance.sol**: Simplified compliance module for hackathon demo (auto-compliant)
+- **HackathonPropertyFactory.sol**: Factory for creating property tokens with compliance setup
+- **T-REX Infrastructure**: IdentityRegistry, TrustedIssuersRegistry, ClaimTopicsRegistry
 
-### Compliance Features
+### Hackathon Features
 
-- **KYC Verification**: Colombian ID (cédula) verification and KYC status tracking
-- **Investment Limits**: Different limits for qualified vs non-qualified investors
-- **Residency Requirements**: Colombian residency verification
-- **Minimum Investment**: 1M COP minimum investment requirement
-- **Maximum Limits**: 50M COP limit for non-qualified investors
+- **Auto-Compliance**: All addresses are automatically KYC compliant for demo purposes
+- **Simplified Workflow**: Streamlined tokenization process for hackathon presentation
+- **Multiple Properties**: Support for multiple property tokenizations
+- **Base Sepolia Deployment**: Live testnet deployment for demonstration
 
 ## 🚀 Quick Start
 
@@ -44,7 +42,7 @@ npx hardhat test
 ### 4. Run Demo Tokenization
 
 ```bash
-npx hardhat run scripts/demo-tokenization.js --network localhost
+npx hardhat run scripts/deploy-property-1-simple.js --network localhost
 ```
 
 ## 📋 Testing
@@ -52,9 +50,9 @@ npx hardhat run scripts/demo-tokenization.js --network localhost
 The test suite covers:
 
 - Property token creation and validation
-- Colombian compliance rules enforcement
-- Fractional purchase workflows
-- Portfolio tracking functionality
+- Simplified compliance rules (auto-compliant)
+- Token purchase workflows
+- Multiple investor scenarios
 - End-to-end tokenization process
 
 ### Run Specific Tests
@@ -67,7 +65,7 @@ npx hardhat test
 npx hardhat test --reporter spec
 
 # Run specific test file
-npx hardhat test test/PropertyTokenization.test.js
+npx hardhat test test/SimpleTokenization.test.js
 ```
 
 ## 🔧 Deployment
@@ -81,12 +79,7 @@ npx hardhat node
 
 2. Deploy contracts:
 ```bash
-npx hardhat run scripts/deploy.js --network localhost
-```
-
-3. Run demo:
-```bash
-npx hardhat run scripts/demo-tokenization.js --network localhost
+npx hardhat run scripts/deploy-property-1-simple.js --network localhost
 ```
 
 ### Base Sepolia Testnet
@@ -99,7 +92,9 @@ export BASESCAN_API_KEY=your_basescan_api_key
 
 2. Deploy to testnet:
 ```bash
-npx hardhat run scripts/deploy.js --network base-sepolia
+npx hardhat run scripts/deploy-property-1-simple.js --network base-sepolia
+npx hardhat run scripts/deploy-property-2-simple.js --network base-sepolia
+npx hardhat run scripts/deploy-property-3-simple.js --network base-sepolia
 ```
 
 3. Verify contracts:
@@ -107,33 +102,65 @@ npx hardhat run scripts/deploy.js --network base-sepolia
 npx hardhat verify --network base-sepolia DEPLOYED_CONTRACT_ADDRESS
 ```
 
+## 🏠 Live Deployed Properties
+
+### Base Sepolia Testnet
+
+**Property 1: Apartamento Chapinero Premium**
+- Token Address: `0xE5e3203B043AaB9d2a43929Fc9ECde7f0D90DE6A`
+- Symbol: `CHAP001`
+- Total Value: 500 ETH (500M COP)
+- Total Tokens: 500,000
+- Status: Ready for demo
+
+**Property 2: Casa Zona Rosa Bogotá**
+- Token Address: `0x98e7a98DfD326EBd13c78789768EaDe3f2251C56`
+- Symbol: `ROSA002`
+- Total Value: 800 ETH (800M COP)
+- Total Tokens: 800,000
+- Status: Ready for demo
+
+**Property 3: Oficina El Poblado Medellín**
+- Token Address: `0x188c31F1630a5F1ec7970962A1F3CcDe65E94C82`
+- Symbol: `POB003`
+- Total Value: 350 ETH (350M COP)
+- Total Tokens: 350,000
+- Status: Ready for demo
+
+### Infrastructure Contracts
+
+- **TrustedIssuersRegistry**: `0xe55B8d0F9776B97AF9d4b422d35f294216AB5B78`
+- **ClaimTopicsRegistry**: `0xF5389C56Bc55e66D882cAB9814b176090d9996b7`
+- **IdentityRegistryStorage**: `0x524b05CE6ec12AE02814f47C45478f06166Cc6Dc`
+- **IdentityRegistry**: `0xC53C56848a8a62B8bea942C2844546B7b7E8e8Cc`
+
 ## 💰 Token Economics
 
 ### Property Tokenization Model
 
-- **Token Supply**: Based on property value and minimum investment (400,000 COP)
+- **Token Supply**: Based on property value and minimum investment
 - **Price Per Token**: Property Value ÷ Total Tokens
-- **Minimum Purchase**: 100 tokens (400,000 COP)
-- **Platform Fee**: 2.5% on all transactions
+- **Minimum Purchase**: 1 token
+- **Platform Fee**: None (hackathon demo)
 
-### Example: Apartamento Chapinero
+### Example: Apartamento Chapinero Premium
 
 ```
-Property Value: 350,000,000 COP (350M COP)
-Total Tokens: 350,000
+Property Value: 500,000,000 COP (500M COP)
+Total Tokens: 500,000
 Price per Token: 1,000 COP
-Minimum Investment: 100,000 COP (100 tokens)
-Ownership per Token: 0.0002857% of property
+Minimum Investment: 1,000 COP (1 token)
+Ownership per Token: 0.0002% of property
 ```
 
 ## 🔒 Security Features
 
-### Compliance Checks
+### Hackathon Compliance
 
-- **Identity Verification**: Cédula registration and validation
-- **KYC Status**: Mandatory KYC completion before transfers
-- **Investment Limits**: Automatic enforcement of regulatory limits
-- **Transfer Restrictions**: Only to compliant, verified investors
+- **Auto-KYC**: All addresses are automatically compliant for demo
+- **Simplified Rules**: Streamlined for hackathon presentation
+- **Transfer Restrictions**: Standard T-REX transfer restrictions
+- **Access Control**: Role-based permissions using OpenZeppelin
 
 ### Smart Contract Security
 
@@ -156,11 +183,11 @@ Ownership per Token: 0.0002857% of property
 
 ```javascript
 {
-  totalInvestments: 2,
-  totalValue: 85000000,     // 85M COP
-  totalTokens: 85000,
-  activeProperties: 2,
-  totalReturns: 5000000     // 5M COP profit
+  totalInvestments: 3,
+  totalValue: 1650000000,     // 1.65B COP
+  totalTokens: 1650000,
+  activeProperties: 3,
+  deploymentNetwork: "base-sepolia"
 }
 ```
 
@@ -181,36 +208,49 @@ Key events for off-chain integration:
 
 - `PropertyTokenCreated`: New property tokenized
 - `SharesPurchased`: Token purchase completed
-- `InvestorRegistered`: New investor onboarded
+- `PropertyTokenized`: Property details initialized
 - `KYCStatusUpdated`: KYC verification status change
 
 ## 🧪 Demo Scenario
 
-The demo script demonstrates a complete tokenization workflow:
+The test demonstrates a complete tokenization workflow:
 
 1. **Deploy Infrastructure**: T-REX registry contracts
 2. **Create Property Token**: Apartamento in Chapinero, Bogotá
-3. **Setup Compliance**: Register Colombian investor with KYC
-4. **List for Sale**: Make tokens available for purchase
-5. **Execute Purchase**: Buy 10,000 tokens (2.857% ownership)
-6. **Verify Holdings**: Confirm token balance and ownership
-7. **Update Portfolio**: Track investment in portfolio system
+3. **Setup Compliance**: Auto-compliant KYC for all addresses
+4. **Register Investors**: Multiple investor identities
+5. **Execute Purchases**: Buy tokens for multiple investors
+6. **Verify Holdings**: Confirm token balances and ownership
+7. **Calculate Performance**: Track investment percentages
 
 ### Demo Output
 
 ```
-🏠 MIIA - Demo de Tokenización de Propiedades Colombianas
-============================================================
-👤 Addresses and contracts...
-📋 1. Deploying T-REX infrastructure...
-🏢 2. Tokenizing property...
-⚖️  3. Setting up Colombian compliance...
-🛒 4. Listing property for fractional sale...
-💰 5. Purchasing tokens...
-🔍 6. Verifying holdings...
-📊 7. Updating portfolio...
-📈 8. Tokenization summary...
-✅ ¡TOKENIZACIÓN EXITOSA!
+🏗️  Setting up T-REX infrastructure for hackathon...
+✅ T-REX infrastructure deployed successfully
+
+📄 Checking property details...
+   ✅ Property ID: HACK001
+   ✅ Total Value: 350.0 ETH
+   ✅ Total Tokens: 350000
+
+💰 Testing token purchase with auto-compliance...
+   ✅ Identity registered for investor: 0x...
+   ✅ Tokens purchased: 10000
+   ✅ Investor shares: 10000
+   📊 Ownership percentage: 2.8571%
+
+🚀 === HACKATHON TOKENIZATION DEMO ===
+1️⃣  Setting up investor identities...
+   ✅ Identities registered for both investors (auto-compliant)
+2️⃣  Executing token purchases...
+   💰 Investor1 tokens: 15000
+   💰 Investor2 tokens: 8000
+3️⃣  Final summary:
+   🏭 Total supply: 23000
+   🛍️  Available: 327000
+   📊 Sold: 6.57%
+🎉 HACKATHON DEMO COMPLETED SUCCESSFULLY!
 ```
 
 ## 📚 Documentation
@@ -218,16 +258,16 @@ The demo script demonstrates a complete tokenization workflow:
 ### Contract Interfaces
 
 - [PropertyToken Interface](./contracts/PropertyToken.sol)
-- [Compliance Interface](./contracts/ColombianCompliance.sol)
-- [Factory Interface](./contracts/PropertyTokenFactory.sol)
+- [SimpleCompliance Interface](./contracts/SimpleCompliance.sol)
+- [HackathonPropertyFactory Interface](./contracts/HackathonPropertyFactory.sol)
 
-### Regulatory Compliance
+### T-REX Integration
 
-Based on Colombian securities regulations:
-- Superintendencia Financiera de Colombia (SFC) guidelines
-- Colombian resident investor requirements
-- KYC/AML compliance standards
-- Investment limit enforcement
+Based on Tokeny Solutions T-REX standard:
+- ERC-3643 compliant tokens
+- Identity management system
+- Compliance framework
+- Transfer restrictions
 
 ## 🤝 Contributing
 
@@ -250,4 +290,4 @@ For technical support or questions:
 
 ---
 
-**⚠️ Disclaimer**: This is a hackathon project for demonstration purposes. Not intended for production use without proper auditing and regulatory approval.
+**⚠️ Disclaimer**: This is a hackathon project for demonstration purposes. The simplified compliance rules are for demo only and not intended for production use without proper auditing and regulatory approval.
