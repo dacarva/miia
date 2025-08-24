@@ -88,13 +88,13 @@ describe("Simple Property Tokenization (Hackathon)", function () {
     propertyToken = await PropertyTokenFactory.deploy();
     await propertyToken.waitForDeployment();
 
-    // Initialize the T-REX token
+    // Initialize the T-REX token with 0 decimals for whole shares
     await propertyToken.init(
       await IdentityRegistry.getAddress(),
       await compliance.getAddress(),
       "Apartaestudio La Julita Premium",
       "LAJU001",
-      18,
+      0, // Decimals set to 0
       owner.address
     );
 
@@ -205,6 +205,7 @@ describe("Simple Property Tokenization (Hackathon)", function () {
       const balance = await propertyToken.balanceOf(investor1.address);
       const ownershipPercentage = await propertyToken.getInvestorOwnershipPercentage(investor1.address);
       
+      // With 0 decimals, the balance should be the exact token amount
       expect(balance).to.equal(tokenAmount);
       
       console.log(`   ✅ Tokens purchased: ${balance.toString()}`);
@@ -262,7 +263,7 @@ describe("Simple Property Tokenization (Hackathon)", function () {
       console.log(`   💰 Investor1 tokens: ${balance1.toString()} (${(Number(ownership1) / 100).toFixed(4)}%)`);
       console.log(`   💰 Investor2 tokens: ${balance2.toString()} (${(Number(ownership2) / 100).toFixed(4)}%)`);
       
-      // Step 3: Verify totals
+      // Verify totals
       const totalSupply = await propertyToken.totalSupply();
       const availableTokens = Number(PROPERTY_DETAILS.totalTokens) - Number(totalSupply);
       
@@ -272,7 +273,7 @@ describe("Simple Property Tokenization (Hackathon)", function () {
       console.log(`   📊 Sold: ${((Number(totalSupply) / Number(PROPERTY_DETAILS.totalTokens)) * 100).toFixed(2)}%`);
       
       expect(totalSupply).to.equal(investment1 + investment2);
-      expect(availableTokens).to.equal(Number(PROPERTY_DETAILS.totalTokens) - Number(totalSupply));
+      expect(availableTokens).to.equal(Number(PROPERTY_DETAILS.totalTokens) - (investment1 + investment2));
       
       console.log("🎉 HACKATHON DEMO COMPLETED SUCCESSFULLY!");
     });

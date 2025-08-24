@@ -126,7 +126,7 @@ npx hardhat verify --network base-sepolia DEPLOYED_CONTRACT_ADDRESS
 ### Base Sepolia Testnet
 
 **Property 1: Apartaestudio La Julita Premium**
-- Token Address: `0xCaa3bd187e785c37b24eBb5c87e26bBe621dEACa`
+- Token Address: `0x05C9d708CcAa1296247E04312b199Fd285de1aA0`
 - Symbol: `LAJU001`
 - Sale Value: 240M COP
 - Total Tokens: 240,000
@@ -134,7 +134,7 @@ npx hardhat verify --network base-sepolia DEPLOYED_CONTRACT_ADDRESS
 - Status: Ready for COP-based purchases
 
 **Property 2: Apartamento Cerritos Premium**
-- Token Address: `0x642165367c007e414a4899a884ac1026169524A5`
+- Token Address: `0xF8A82FE1a182C8dD4FaD980972066A4C1780194b`
 - Symbol: `CERR002`
 - Sale Value: 1.6B COP
 - Total Tokens: 1,600,000
@@ -142,7 +142,7 @@ npx hardhat verify --network base-sepolia DEPLOYED_CONTRACT_ADDRESS
 - Status: Ready for COP-based purchases
 
 **Property 3: PH Dúplex Rosales Premium**
-- Token Address: `0x98bBa5749433Ab65Ea274DBA86C31308c470Bbed`
+- Token Address: `0xD25a133AfE32B5e1519f0f174e9c2a3132c1bf9C`
 - Symbol: `ROSA003`
 - Sale Value: 2.1B COP
 - Total Tokens: 2,100,000
@@ -151,11 +151,11 @@ npx hardhat verify --network base-sepolia DEPLOYED_CONTRACT_ADDRESS
 
 ### Infrastructure Contracts
 
-- **TrustedIssuersRegistry**: `0xf16ee4801a58ac2b8D8fa6A820B97fa61fcc89B3`
-- **ClaimTopicsRegistry**: `0x6d08364738Ea9f8349520d95E9928f0917bB7CaB`
-- **IdentityRegistryStorage**: `0x6226386501E2cb20F5B0315C1070e39a9A3F1Ba6`
-- **IdentityRegistry**: `0x405B764d249c9B69b7e53CEaAc2ffE1F116A80D8`
-- **🇨🇴 ColombianCOP Token**: `0xD1E0A2c64e7a1Db0b7455587c2b382C756c38f6E` (100 trillion supply)
+- **TrustedIssuersRegistry**: `0xF33838f6c85cFF9667a29B871592c74A053C89cd`
+- **ClaimTopicsRegistry**: `0x203C4b26035fC20CAb92085B121EfFc8fbf533Ce`
+- **IdentityRegistryStorage**: `0xE7538210aE32183Fc72753c3F793699a0d16620a`
+- **IdentityRegistry**: `0x8A3477a1c197fA0565C279bcae784b9d5eC93B34`
+- **🇨🇴 ColombianCOP Token**: `0xc2861B9bAd9aAeB682f001fE9DcD7Cdd630e4b12` (100 trillion supply)
 
 ## 💰 Token Economics
 
@@ -169,6 +169,8 @@ npx hardhat verify --network base-sepolia DEPLOYED_CONTRACT_ADDRESS
 - **COP Token Supply**: 100 trillion tokens (mock token)
 
 ### Example: Apartaestudio La Julita Premium
+
+- **Token Decimals**: `0`. Each token represents one whole, indivisible share of the property.
 
 ```
 Property Sale Value: 240,000,000 COP (240M COP)

@@ -52,7 +52,7 @@ async function main() {
     await compliance2.getAddress(),
     "Apartamento Cerritos Premium",
     "CERR002",
-    18,
+    0, // Decimals set to 0 for whole shares
     deployer.address
   );
   console.log("   ✅ PropertyToken initialized");

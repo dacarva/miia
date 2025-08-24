@@ -68,6 +68,91 @@
   ],
   "item": [
     {
+      "name": "LLM Full Purchase Flow",
+      "item": [
+        {
+          "name": "Step 1: Check Initial Balance",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"¿Cuál es mi saldo de COP?\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Step 2: Attempt to Purchase (Insufficient Funds)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Quiero comprar 500 tokens de MIIA001.\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Step 3: Purchase COP Tokens",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Sí, por favor, compra 500000 COP.\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Step 4: Confirm New Balance",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Ok, confirma mi saldo ahora.\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        },
+        {
+          "name": "Step 5: Execute Property Purchase",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userMessage\": \"Excelente. Ahora quiero proceder con la compra de los 500 tokens de MIIA001.\",\n  \"phoneNumber\": \"{{colombian_user1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/agent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "agent"]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Property API Tests",
       "item": [
         {
@@ -77,7 +162,7 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/api/properties?limit=5",
-              "host": ["{{base_url}}"],
+              "host": ["{{base_url}} চুক্তি"],
               "path": ["api", "properties"],
               "query": [
                 {

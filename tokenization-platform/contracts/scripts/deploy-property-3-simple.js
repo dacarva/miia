@@ -52,7 +52,7 @@ async function main() {
     await compliance3.getAddress(),
     "PH Dúplex Rosales Premium",
     "ROSA003",
-    18,
+    0, // Decimals set to 0 for whole shares
     deployer.address
   );
   console.log("   ✅ PropertyToken initialized");

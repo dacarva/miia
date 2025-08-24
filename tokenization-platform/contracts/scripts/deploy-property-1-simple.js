@@ -91,7 +91,7 @@ async function main() {
     await compliance1.getAddress(),
     "Apartaestudio La Julita Premium",
     "LAJU001",
-    18,
+    0, // Decimals set to 0 for whole shares
     deployer.address
   );
   console.log("   ✅ PropertyToken initialized");
