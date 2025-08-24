@@ -109,9 +109,14 @@ export async function prepareAgentkitAndWalletProvider(
     );
   }
 
-  // Ensure wallet data directory exists
-  if (!fs.existsSync(WALLET_DATA_DIR)) {
-    fs.mkdirSync(WALLET_DATA_DIR, { recursive: true });
+  // Ensure wallet data directory exists (with error handling for serverless)
+  try {
+    if (!fs.existsSync(WALLET_DATA_DIR)) {
+      fs.mkdirSync(WALLET_DATA_DIR, { recursive: true });
+    }
+  } catch (error) {
+    console.warn("Could not create wallet_data directory (serverless environment):", error);
+    // Continue without the directory - wallet creation will still work
   }
 
   let walletData: WalletData | null = null;
@@ -181,7 +186,13 @@ export async function prepareAgentkitAndWalletProvider(
       lastUsed: new Date().toISOString(),
     };
 
-    fs.writeFileSync(walletFilePath, JSON.stringify(newWalletData, null, 2));
+    // Try to save wallet data (with error handling for serverless)
+    try {
+      fs.writeFileSync(walletFilePath, JSON.stringify(newWalletData, null, 2));
+    } catch (error) {
+      console.warn("Could not save wallet data to file (serverless environment):", error);
+      // Continue without saving - wallet creation still works
+    }
 
     return { agentkit, walletProvider, walletData: newWalletData };
   } catch (error) {
