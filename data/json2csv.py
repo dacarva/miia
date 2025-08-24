@@ -1,0 +1,80 @@
+import os
+import json
+import pandas as pd
+
+def json_to_csv(json_file_path, csv_file_path=None):
+    """
+    Convierte un archivo JSON Lines a formato CSV usando pandas.
+
+    Args:
+        json_file_path (str): Ruta al archivo JSON de entrada
+        csv_file_path (str, optional): Ruta al archivo CSV de salida.
+                                      Si es None, se usa la misma ubicación con extensión .csv
+
+    Returns:
+        str: Ruta del archivo CSV generado
+    """
+    if csv_file_path is None:
+        csv_file_path = os.path.splitext(json_file_path)[0] + '.csv'
+
+    try:
+        print(f"Leyendo archivo JSON: {json_file_path}")
+
+        data = []
+        with open(json_file_path, 'r', encoding='utf-8') as file:
+            for line_number, line in enumerate(file, 1):
+                line = line.strip()
+                if line:  # Ignorar líneas vacías
+                    try:
+                        json_obj = json.loads(line)
+                        data.append(json_obj)
+                    except json.JSONDecodeError as e:
+                        print(f"Error en línea {line_number}: {e}")
+                        print(f"Contenido de la línea: {line}")
+
+        df = pd.DataFrame(data)
+
+        print("Aplicando filtros y transformaciones...")
+
+        if 'business_type' in df.columns:
+            df = df[df['business_type'].str.contains('venta', case=False, na=False)]
+            print(f"Filtrado por business_type 'venta': {len(df)} registros")
+
+        if 'rent_value' in df.columns:
+            df['rent_value'] = pd.to_numeric(df['rent_value'], errors='coerce')
+
+            initial_count = len(df)
+            df = df[df['rent_value'].notna() & (df['rent_value'] >= 1000000)]
+            removed_count = initial_count - len(df)
+            print(f"Eliminados {removed_count} registros con rent_value NaN o < 1,000,000")
+
+        print(f"Convirtiendo a CSV: {csv_file_path}")
+        df.to_csv(csv_file_path, index=False, encoding='utf-8')
+
+        print(f"Conversión completada exitosamente!")
+        print(f"Total de registros procesados: {len(df)}")
+        print(f"Columnas en el CSV: {list(df.columns)}")
+
+        return csv_file_path
+
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo {json_file_path}")
+        return None
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return None
+
+def main():
+    """Función principal para ejecutar la conversión"""
+    json_file = "json_habi_data/inmobiliario.json"
+    csv_file = "json_habi_data/inmobiliario.csv"
+
+    result = json_to_csv(json_file, csv_file)
+
+    if result:
+        print(f"Archivo CSV generado en: {result}")
+    else:
+        print("La conversión falló")
+
+if __name__ == "__main__":
+    main()
