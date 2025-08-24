@@ -13,48 +13,48 @@ const DEPLOYED_CONTRACTS = {
   // Properties (updated with latest deployment)
   properties: {
     MIIA001: {
-      name: "Apartaestudio La Julita Premium",
+      name: "Apartaestudio en Venta, La Julita, Pereira",
       symbol: "LAJU001",
       tokenAddress: "0x05C9d708CcAa1296247E04312b199Fd285de1aA0" as Address,
       saleValue: 240000000, // 240M COP
       totalTokens: 240000,
       pricePerToken: 1000, // 1,000 COP per token
-      description: "Apartaestudio premium en La Julita, Pereira",
+      description: "Apartaestudio en Venta, La Julita, Pereira",
       location: "La Julita, Pereira",
-      area: 45,
-      propertyType: "Apartaestudio",
+      area: 32,
+      propertyType: "apartaestudio",
       rooms: 1,
       bathrooms: 1,
       parking: true,
       elevator: true
     },
     MIIA002: {
-      name: "Apartamento Cerritos Premium",
+      name: "Apartamento en Venta y Arriendo, CERRITOS, Pereira",
       symbol: "CERR002",
       tokenAddress: "0xF8A82FE1a182C8dD4FaD980972066A4C1780194b" as Address,
       saleValue: 1600000000, // 1.6B COP
       totalTokens: 1600000,
       pricePerToken: 1000, // 1,000 COP per token
-      description: "Apartamento premium en Cerritos, Pereira",
-      location: "Cerritos, Pereira",
-      area: 85,
-      propertyType: "Apartamento",
+      description: "Apartamento en Venta y Arriendo, CERRITOS, Pereira",
+      location: "CERRITOS, Pereira",
+      area: 310,
+      propertyType: "apartamento",
       rooms: 2,
       bathrooms: 2,
       parking: true,
       elevator: true
     },
     MIIA003: {
-      name: "PH Dúplex Rosales Premium",
+      name: "PH dúplex Clásico en Rosales Alto, Bogotá",
       symbol: "ROSA003",
       tokenAddress: "0xD25a133AfE32B5e1519f0f174e9c2a3132c1bf9C" as Address,
       saleValue: 2100000000, // 2.1B COP
       totalTokens: 2100000,
       pricePerToken: 1000, // 1,000 COP per token
-      description: "PH Dúplex premium en Rosales, Bogotá",
-      location: "Rosales, Bogotá",
-      area: 180,
-      propertyType: "PH Dúplex",
+      description: "PH dúplex Clásico en Rosales Alto, Bogotá",
+      location: "Rosales Alto, Bogotá",
+      area: 372,
+      propertyType: "apartamento",
       rooms: 3,
       bathrooms: 3,
       parking: true,

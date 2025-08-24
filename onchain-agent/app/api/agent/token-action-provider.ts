@@ -4,57 +4,58 @@ import { Address, parseEther, formatEther, encodeFunctionData } from "viem";
 // Deployed contract addresses from the latest deployment (README.md)
 const DEPLOYED_CONTRACTS = {
   // Infrastructure
-  TrustedIssuersRegistry: "0xf16ee4801a58ac2b8D8fa6A820B97fa61fcc89B3" as Address,
-  ClaimTopicsRegistry: "0x6d08364738Ea9f8349520d95E9928f0917bB7CaB" as Address,
-  IdentityRegistryStorage: "0x6226386501E2cb20F5B0315C1070e39a9A3F1Ba6" as Address,
-  IdentityRegistry: "0x405B764d249c9B69b7e53CEaAc2ffE1F116A80D8" as Address,
-  ColombianCOP: "0xD1E0A2c64e7a1Db0b7455587c2b382C756c38f6E" as Address,
+  TrustedIssuersRegistry: "0xF33838f6c85cFF9667a29B871592c74A053C89cd" as Address,
+  ClaimTopicsRegistry: "0x203C4b26035fC20CAb92085B121EfFc8fbf533Ce" as Address,
+  IdentityRegistryStorage: "0xE7538210aE32183Fc72753c3F793699a0d16620a" as Address,
+  IdentityRegistry: "0x8A3477a1c197fA0565C279bcae784b9d5eC93B34" as Address,
+  ColombianCOP: "0xc2861B9bAd9aAeB682f001fE9DcD7Cdd630e4b12" as Address, // Correct address from deployment
+
   
   // Properties (updated with latest deployment)
   properties: {
     MIIA001: {
-      name: "Apartaestudio La Julita Premium",
+      name: "Apartaestudio en Venta, La Julita, Pereira",
       symbol: "LAJU001",
-      tokenAddress: "0xCaa3bd187e785c37b24eBb5c87e26bBe621dEACa" as Address,
+      tokenAddress: "0x05C9d708CcAa1296247E04312b199Fd285de1aA0" as Address,
       saleValue: 240000000, // 240M COP
       totalTokens: 240000,
       pricePerToken: 1000, // 1,000 COP per token
-      description: "Apartaestudio premium en La Julita, Pereira",
+      description: "Apartaestudio en Venta, La Julita, Pereira",
       location: "La Julita, Pereira",
-      area: 45,
-      propertyType: "Apartaestudio",
+      area: 32,
+      propertyType: "apartaestudio",
       rooms: 1,
       bathrooms: 1,
       parking: true,
       elevator: true
     },
     MIIA002: {
-      name: "Apartamento Cerritos Premium",
+      name: "Apartamento en Venta y Arriendo, CERRITOS, Pereira",
       symbol: "CERR002",
-      tokenAddress: "0x642165367c007e414a4899a884ac1026169524A5" as Address,
+      tokenAddress: "0xF8A82FE1a182C8dD4FaD980972066A4C1780194b" as Address,
       saleValue: 1600000000, // 1.6B COP
       totalTokens: 1600000,
       pricePerToken: 1000, // 1,000 COP per token
-      description: "Apartamento premium en Cerritos, Pereira",
-      location: "Cerritos, Pereira",
-      area: 85,
-      propertyType: "Apartamento",
+      description: "Apartamento en Venta y Arriendo, CERRITOS, Pereira",
+      location: "CERRITOS, Pereira",
+      area: 310,
+      propertyType: "apartamento",
       rooms: 2,
       bathrooms: 2,
       parking: true,
       elevator: true
     },
     MIIA003: {
-      name: "PH Dúplex Rosales Premium",
+      name: "PH dúplex Clásico en Rosales Alto, Bogotá",
       symbol: "ROSA003",
-      tokenAddress: "0x98bBa5749433Ab65Ea274DBA86C31308c470Bbed" as Address,
+      tokenAddress: "0xD25a133AfE32B5e1519f0f174e9c2a3132c1bf9C" as Address,
       saleValue: 2100000000, // 2.1B COP
       totalTokens: 2100000,
       pricePerToken: 1000, // 1,000 COP per token
-      description: "PH Dúplex premium en Rosales, Bogotá",
-      location: "Rosales, Bogotá",
-      area: 180,
-      propertyType: "PH Dúplex",
+      description: "PH dúplex Clásico en Rosales Alto, Bogotá",
+      location: "Rosales Alto, Bogotá",
+      area: 372,
+      propertyType: "apartamento",
       rooms: 3,
       bathrooms: 3,
       parking: true,
@@ -99,7 +100,7 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
     return network === "base-sepolia" || network?.networkId === "base-sepolia";
   }
 
-  getActions(walletProvider: WalletProvider): CreateAction[] {
+  getActions(): CreateAction[] {
     return [
       {
         name: "purchase_cop_tokens",
@@ -118,7 +119,7 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
           },
           required: ["phoneNumber", "copAmount"]
         },
-        func: async (args: COPPurchaseParams, context?: any) => this.purchaseCOPTokens(args, walletProvider)
+        func: this.purchaseCOPTokens.bind(this)
       },
       {
         name: "list_tokenized_properties",
@@ -128,7 +129,7 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
           properties: {},
           required: []
         },
-        func: async () => this.listTokenizedProperties()
+        func: this.listTokenizedProperties.bind(this)
       },
       {
         name: "get_property_token_info",
@@ -143,7 +144,7 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
           },
           required: ["propertyId"]
         },
-        func: async (args: { propertyId: string }) => this.getPropertyTokenInfo(args)
+        func: this.getPropertyTokenInfo.bind(this)
       },
       {
         name: "purchase_property_tokens",
@@ -166,7 +167,7 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
           },
           required: ["propertyId", "tokenAmount", "phoneNumber"]
         },
-        func: async (args: TokenPurchaseParams) => this.purchasePropertyTokens(args)
+        func: this.purchasePropertyTokens.bind(this)
       },
       {
         name: "get_user_token_holdings",
@@ -181,7 +182,7 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
           },
           required: ["phoneNumber"]
         },
-        func: async (args: { phoneNumber: string }) => this.getUserTokenHoldings(args)
+        func: this.getUserTokenHoldings.bind(this)
       },
       {
         name: "check_cop_balance",
@@ -196,7 +197,7 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
           },
           required: ["phoneNumber"]
         },
-        func: async (args: { phoneNumber: string }, context?: any) => this.checkCOPBalance(args, walletProvider)
+        func: this.checkCOPBalance.bind(this)
       }
     ];
   }
@@ -385,6 +386,13 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
         transactionStatus = await this.waitForTransactionConfirmation(transactionHash, 240000); // 4 minutes
       }
 
+      // Wait 3 seconds to ensure the transaction is fully processed
+      if (transactionStatus === "confirmed") {
+        console.log("   Waiting 3 seconds for transaction to be fully processed...");
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        console.log("   COP purchase completed successfully!");
+      }
+
       return {
         success: true,
         transaction: {
@@ -445,7 +453,7 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
       });
 
       // Make a read-only call to the contract
-      const result = await walletProvider.readContract({
+      const result = await (walletProvider as any).readContract({
         address: DEPLOYED_CONTRACTS.ColombianCOP,
         abi: [
           {
@@ -595,7 +603,7 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
     }
   }
 
-  private async purchasePropertyTokens(args: TokenPurchaseParams): Promise<{
+  private async purchasePropertyTokens(args: TokenPurchaseParams, walletProvider: WalletProvider): Promise<{
     success: boolean;
     transaction?: any;
     purchase?: any;
@@ -615,7 +623,6 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
         };
       }
 
-      // Validate token amount
       if (tokenAmount <= 0) {
         return {
           success: false,
@@ -624,51 +631,85 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
         };
       }
 
-      if (tokenAmount > property.totalTokens) {
-        return {
-          success: false,
-          error: "Cantidad excesiva",
-          message: `No puedes comprar más de ${property.totalTokens} tokens. Esta propiedad tiene un máximo de ${property.totalTokens} tokens disponibles.`
-        };
-      }
-
-      // Calculate total cost in COP
       const totalCostCOP = tokenAmount * property.pricePerToken;
-      
-      // Simulate wallet address from phone number
-      const userAddress = "0x" + Buffer.from(phoneNumber).toString('hex').padEnd(40, '0').substring(0, 40);
-      
-      // Check user's actual COP balance from the contract
-      let userCOPBalance = 0;
-      try {
-        const balanceResult = await this.walletProvider.readContract({
-          address: DEPLOYED_CONTRACTS.ColombianCOP,
-          abi: [
-            {
-              "inputs": [{"internalType": "address", "name": "account", "type": "address"}],
-              "name": "balanceOfCOP",
-              "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-              "stateMutability": "view",
-              "type": "function"
-            }
-          ],
-          functionName: "balanceOfCOP",
-          args: [userAddress as Address]
-        });
-        userCOPBalance = Number(balanceResult);
-      } catch (error) {
-        console.error("Error checking COP balance:", error);
-        // Fall back to assuming user has sufficient balance for demo
-        userCOPBalance = totalCostCOP + 1000000;
-      }
-      
-      if (totalCostCOP > userCOPBalance) {
+      const userAddress = walletProvider.getAddress();
+
+      const balanceResult = await this.checkCOPBalance({ phoneNumber }, walletProvider);
+      if (!balanceResult.success || balanceResult.balance.copBalance < totalCostCOP) {
         return {
           success: false,
           error: "Fondos insuficientes",
-          message: `Necesitas ${this.formatCurrency(totalCostCOP)} COP para esta compra, pero solo tienes ${this.formatCurrency(userCOPBalance)} COP. Usa purchase_cop_tokens para comprar más tokens COP.`
+          message: `Necesitas ${this.formatCurrency(totalCostCOP)} COP, pero tu saldo es ${balanceResult.balance.formattedBalance}. Usa 'purchase_cop_tokens' para obtener más.`
         };
       }
+
+      const approveCallData = encodeFunctionData({
+        abi: [{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}],
+        functionName: "approve",
+        args: [property.tokenAddress, BigInt(totalCostCOP * 1e18)] // Convert to wei (18 decimals)
+      });
+
+      const buySharesCallData = encodeFunctionData({
+        abi: [{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"copAmount","type":"uint256"}],"name":"buyShares","outputs":[],"stateMutability":"nonpayable","type":"function"}],
+        functionName: "buyShares",
+        args: [BigInt(tokenAmount), BigInt(totalCostCOP * 1e18)] // Convert to wei (18 decimals)
+      });
+
+      // Send transactions sequentially
+      console.log("   Sending 'approve' transaction...");
+      const approveTx = await (walletProvider as any).sendTransaction({
+        to: DEPLOYED_CONTRACTS.ColombianCOP,
+        data: approveCallData,
+        value: 0
+      });
+      
+      let approveTxHash = approveTx.hash;
+      if (!approveTxHash) {
+        const txString = JSON.stringify(approveTx);
+        const hashMatch = txString.match(/"(0x[a-fA-F0-9]{64})"/);
+        if (hashMatch) approveTxHash = hashMatch[1];
+      }
+      console.log(`   'approve' transaction hash: ${approveTxHash}`);
+      
+      console.log("   Waiting for 'approve' transaction confirmation...");
+      const approveStatus = await this.waitForTransactionConfirmation(approveTxHash);
+
+      if (approveStatus !== 'confirmed') {
+        throw new Error(`'approve' transaction failed with status: ${approveStatus}`);
+      }
+      console.log("   'approve' transaction confirmed.");
+
+      // Wait 3 seconds to ensure the approve transaction is fully processed
+      console.log("   Waiting 3 seconds for approve transaction to be fully processed...");
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      console.log("   Continue with buyShares transaction...");
+
+      console.log("   Sending 'buyShares' transaction...");
+      const buySharesTx = await (walletProvider as any).sendTransaction({
+        to: property.tokenAddress,
+        data: buySharesCallData,
+        value: 0
+      });
+
+      let buySharesTxHash = buySharesTx.hash;
+      if (!buySharesTxHash) {
+        const txString = JSON.stringify(buySharesTx);
+        const hashMatch = txString.match(/"(0x[a-fA-F0-9]{64})"/);
+        if (hashMatch) buySharesTxHash = hashMatch[1];
+      }
+      console.log(`   'buyShares' transaction hash: ${buySharesTxHash}`);
+      
+      const buySharesStatus = await this.waitForTransactionConfirmation(buySharesTxHash);
+
+      if (buySharesStatus !== 'confirmed') {
+        throw new Error(`'buyShares' transaction failed with status: ${buySharesStatus}`);
+      }
+      console.log("   'buyShares' transaction confirmed.");
+
+      // Wait 3 seconds to ensure the buyShares transaction is fully processed
+      console.log("   Waiting 3 seconds for buyShares transaction to be fully processed...");
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      console.log("   Property purchase completed successfully!");
 
       // Calculate ownership percentage
       const ownershipPercentage = (tokenAmount / property.totalTokens * 100).toFixed(4);
@@ -676,9 +717,9 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
       return {
         success: true,
         transaction: {
-          hash: "0x" + "purchase".padEnd(60, '0'), // Demo transaction hash
-          blockNumber: 12346,
-          gasUsed: "200000",
+          hash: buySharesTxHash,
+          blockNumber: "confirmed",
+          gasUsed: "subsidized",
           copTokensUsed: totalCostCOP,
           propertyTokensReceived: tokenAmount
         },
@@ -697,7 +738,7 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
           pricePerToken: property.pricePerToken,
           formattedPricePerToken: this.formatCurrency(property.pricePerToken)
         },
-        message: `¡Compra exitosa con tokens COP! Has adquirido ${tokenAmount} tokens de ${property.name} por ${this.formatCurrency(totalCostCOP)} COP, equivalente al ${ownershipPercentage}% de la propiedad.`
+        message: `¡Compra exitosa con tokens COP! Has adquirido ${tokenAmount} tokens de ${property.name} por ${this.formatCurrency(totalCostCOP)} COP, equivalente al ${ownershipPercentage}% de la propiedad. Transacción confirmada en blockchain: ${buySharesTxHash}.`
       };
 
     } catch (error) {
@@ -705,7 +746,7 @@ class TokenActionProvider extends ActionProvider<WalletProvider> {
       return {
         success: false,
         error: "Error en la compra de tokens",
-        message: "No pude procesar la compra de tokens. Verifica que tienes suficientes tokens COP e intenta nuevamente."
+        message: `No pude procesar la compra de tokens. Error: ${error instanceof Error ? error.message : String(error)}. Verifica que tienes suficientes tokens COP e intenta nuevamente.`
       };
     }
   }

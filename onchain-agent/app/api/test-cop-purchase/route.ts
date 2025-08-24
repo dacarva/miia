@@ -1,5 +1,39 @@
 import { NextResponse } from "next/server";
 import { prepareAgentkitAndWalletProvider } from "../agent/prepare-agentkit";
+import { tokenActionProvider } from "../agent/token-action-provider";
+
+interface TestResults {
+  step1_setup: {
+    wallet_address: string;
+    network: any;
+    status: string;
+  };
+  step2_actions: {
+    total_actions?: number;
+    cop_actions?: string[];
+    all_actions?: string[];
+    status?: string;
+    error?: string;
+  };
+  step3_balance_before: {
+    result?: any;
+    status?: string;
+    error?: string;
+  };
+  step4_purchase: {
+    amount?: number;
+    result?: any;
+    transaction_hash?: string;
+    status?: string;
+    error?: string;
+  };
+  step5_balance_after: {
+    result?: any;
+    status?: string;
+    error?: string;
+  };
+  explorer_link?: string;
+}
 
 export async function GET() {
   try {
@@ -7,9 +41,10 @@ export async function GET() {
     
     // Step 1: Initialize AgentKit and wallet provider
     console.log('1. Setting up AgentKit and wallet provider...');
-    const { agentkit, walletProvider, walletData } = await prepareAgentkitAndWalletProvider('+573001234567', false);
+    const { walletProvider, walletData } = await prepareAgentkitAndWalletProvider('+573001234567', false);
+    const provider = tokenActionProvider();
     
-    const results = {
+    const results: TestResults = {
       step1_setup: {
         wallet_address: walletData.smartWalletAddress,
         network: walletProvider.getNetwork(),
@@ -24,9 +59,9 @@ export async function GET() {
     console.log(`✅ Wallet: ${walletData.smartWalletAddress}`);
     console.log(`✅ Network: ${walletProvider.getNetwork().networkId}`);
     
-    // Step 2: Get available AgentKit actions
-    console.log('2. Getting available AgentKit actions...');
-    const actions = agentkit.getActions();
+    // Step 2: Get available actions from the token action provider
+    console.log('2. Getting available actions from token action provider...');
+    const actions = provider.getActions();
     const copActions = actions.filter(action => action.name.includes('cop') || action.name.includes('COP'));
     
     results.step2_actions = {
@@ -51,18 +86,19 @@ export async function GET() {
     console.log('3. Checking current COP balance...');
     if (balanceAction) {
       try {
-        const balanceResult = await balanceAction.func({ phoneNumber: '+573001234567' });
+        const balanceResult = await balanceAction.func({ phoneNumber: '+573001234567' }, walletProvider);
         results.step3_balance_before = {
           result: balanceResult,
           status: "✅ Success"
         };
         console.log('✅ Current balance checked');
-      } catch (balanceError) {
+      } catch (balanceError: unknown) {
+        const errorMessage = balanceError instanceof Error ? balanceError.message : String(balanceError);
         results.step3_balance_before = {
-          error: balanceError.message,
+          error: errorMessage,
           status: "❌ Failed"
         };
-        console.log('❌ Balance check failed:', balanceError.message);
+        console.log('❌ Balance check failed:', errorMessage);
       }
     } else {
       results.step3_balance_before = {
@@ -81,7 +117,7 @@ export async function GET() {
         const purchaseResult = await purchaseAction.func({
           phoneNumber: '+573001234567',
           copAmount: purchaseAmount
-        });
+        }, walletProvider);
         
         results.step4_purchase = {
           amount: purchaseAmount,
@@ -96,13 +132,14 @@ export async function GET() {
           console.log(`🔗 Transaction hash: ${purchaseResult.transaction.hash}`);
         }
         
-      } catch (purchaseError) {
+      } catch (purchaseError: unknown) {
+        const errorMessage = purchaseError instanceof Error ? purchaseError.message : String(purchaseError);
         results.step4_purchase = {
           amount: purchaseAmount,
-          error: purchaseError.message,
+          error: errorMessage,
           status: "❌ Failed"
         };
-        console.log('❌ Purchase failed:', purchaseError.message);
+        console.log('❌ Purchase failed:', errorMessage);
       }
     } else {
       results.step4_purchase = {
@@ -115,18 +152,19 @@ export async function GET() {
     console.log('5. Checking balance after purchase...');
     if (balanceAction) {
       try {
-        const newBalanceResult = await balanceAction.func({ phoneNumber: '+573001234567' });
+        const newBalanceResult = await balanceAction.func({ phoneNumber: '+573001234567' }, walletProvider);
         results.step5_balance_after = {
           result: newBalanceResult,
           status: "✅ Success"
         };
         console.log('✅ New balance checked');
-      } catch (balanceError) {
+      } catch (balanceError: unknown) {
+        const errorMessage = balanceError instanceof Error ? balanceError.message : String(balanceError);
         results.step5_balance_after = {
-          error: balanceError.message,
+          error: errorMessage,
           status: "❌ Failed"
         };
-        console.log('❌ New balance check failed:', balanceError.message);
+        console.log('❌ New balance check failed:', errorMessage);
       }
     } else {
       results.step5_balance_after = {
@@ -148,12 +186,14 @@ export async function GET() {
       results
     });
     
-  } catch (error) {
-    console.error('❌ Test failed:', error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error('❌ Test failed:', errorMessage);
     return NextResponse.json({
       success: false,
-      error: error.message,
-      stack: error.stack
+      error: errorMessage,
+      stack: errorStack
     });
   }
 }
