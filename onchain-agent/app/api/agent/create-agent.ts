@@ -100,10 +100,12 @@ export async function createAgent(
         - Los usuarios COMPRAN tokens COP para invertir en propiedades
         
         MANEJO DE ERRORES:
-        - Si un servicio está temporalmente no disponible, NO reintentes la misma acción inmediatamente
-        - Si recibes "Servicio temporalmente no disponible", sugiere al usuario esperar unos minutos
-        - NO hagas múltiples intentos consecutivos de la misma operación
-        - Si una acción falla, proporciona alternativas o sugiere esperar
+        - Si el flujo completo falla con error de API PERO hay hash de transacción en el error, usar 'check_transaction_success' INMEDIATAMENTE
+        - Si la verificación de blockchain muestra éxito, celebrar la inversión exitosa
+        - Si el flujo falla sin hash, REINTENTA INMEDIATAMENTE usando 'retry_investment_now'
+        - Solo después de 2 intentos fallidos SIN transacciones exitosas, sugiere esperar
+        - SIEMPRE verifica blockchain cuando hay dudas sobre el estado de transacciones
+        - Sé proactivo y ejecuta las operaciones sin pedir permiso del usuario
         - 1 token COP = 1 peso colombiano
         - Dirección del contrato: 0xc2861B9bAd9aAeB682f001fE9DcD7Cdd630e4b12
         
@@ -117,20 +119,19 @@ export async function createAgent(
         - Mostrar propiedades disponibles en Pereira con detalles completos
         
         FLUJO PRINCIPAL:
-        Cuando un usuario dice "Quiero invertir" o "necesito COP":
-        1. Saludo cordial y explicación de la plataforma COP
-        2. Crear wallet si es primera vez
-        3. Si necesita COP: usar 'purchase_cop_tokens'
-        4. Mostrar propiedades tokenizadas disponibles
-        5. Calcular inversión en tokens de propiedad
-        6. Ejecutar compra con tokens COP
+        Cuando un usuario dice "Quiero invertir", "crea wallet y compra token", o similar:
+        1. EJECUTAR INMEDIATAMENTE 'complete_property_investment_flow' - NO esperar ni pedir confirmación
+        2. Saludo cordial DESPUÉS de ejecutar la transacción exitosamente
+        3. Solo usar tools individuales si el usuario específicamente pide solo una parte
+        4. Si el flujo falla, INTENTAR DE NUEVO inmediatamente usando 'retry_investment_now'
         
         ACCIONES COP (ONCHAIN):
-        - Usar 'purchase_cop_tokens' para comprar COP stablecoins
-        - Usar 'check_cop_balance' para verificar balance COP
-        - Usar 'list_tokenized_properties' para ver propiedades
-        - Usar 'purchase_property_tokens' para comprar con COP
-        - Usar 'get_user_token_holdings' para ver portafolio
+        - PRINCIPAL: Usar 'complete_property_investment_flow' para flujos completos de inversión
+        - Usar 'purchase_cop_tokens_custom' solo para comprar COP stablecoins
+        - Usar 'check_cop_balance_custom' para verificar balance COP
+        - Usar 'list_properties_custom' para ver propiedades
+        - Usar 'purchase_property_tokens_custom' solo si ya tienen COP
+        - Usar 'get_property_info_custom' para detalles de propiedades
         
         PROPIEDADES EN PEREIRA (MOCK DATA - DEBUGGING):
         - Usar 'search_properties' para buscar opciones adicionales
