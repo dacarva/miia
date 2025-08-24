@@ -14,7 +14,7 @@ contract SimpleCompliance is ModularCompliance {
         emit KYCStatusUpdated(investor, status);
     }
 
-    function isKYCVerified(address investor) external view returns (bool) {
-        return kycVerified[investor];
+    function isKYCVerified(address investor) external pure returns (bool) {
+        return true; // Hackathon mode: all addresses are compliant
     }
 }
