@@ -3,7 +3,7 @@ import { prepareAgentkitAndWalletProvider } from "../agent/prepare-agentkit";
 import { tokenActionProvider } from "../agent/token-action-provider";
 import { TokenPurchaseParams, COPPurchaseParams } from "../agent/token-action-provider";
 
-export async function GET() {
+export async function GET(request: Request) {
   // Skip execution during build/deployment
   if (process.env.NODE_ENV === 'production' && process.env.SKIP_TESTS === 'true') {
     return NextResponse.json({
@@ -15,11 +15,15 @@ export async function GET() {
   try {
     console.log("--- Starting Full Property Purchase Flow Test ---");
 
-    const phoneNumber = "+573001234567";
-    const propertyId = "MIIA001";
-    const tokenAmount = 1;
-    const pricePerToken = 1000;
+    // Parse query parameters
+    const { searchParams } = new URL(request.url);
+    const phoneNumber = searchParams.get('phoneNumber') || "+573001234567";
+    const propertyId = searchParams.get('propertyId') || "MIIA001";
+    const tokenAmount = parseInt(searchParams.get('tokenAmount') || "1");
+    const pricePerToken = parseInt(searchParams.get('pricePerToken') || "1"); // Updated default to match actual price
     const requiredCOP = tokenAmount * pricePerToken;
+
+    console.log(`   Parameters: ${tokenAmount} tokens of ${propertyId} at ${pricePerToken} COP each = ${requiredCOP} COP total`);
 
     // 1. Prepare Wallet and Action Provider
     const { walletProvider } = await prepareAgentkitAndWalletProvider(phoneNumber);
@@ -36,7 +40,7 @@ export async function GET() {
     // 2. Purchase COP tokens to ensure sufficient funds
     console.log(`   Purchasing ${requiredCOP} COP tokens...`);
     const copParams: COPPurchaseParams = { phoneNumber, copAmount: requiredCOP };
-    const copResult = await purchaseCopAction.func(copParams);
+    const copResult = await purchaseCopAction.func(copParams, walletProvider);
     console.log("   COP Purchase Result:", copResult.message);
 
     if (!copResult.success || copResult.transaction?.status !== 'confirmed') {
@@ -53,7 +57,7 @@ export async function GET() {
     while(currentBalance < requiredCOP && attempts < maxAttempts) {
       attempts++;
       console.log(`   Attempt ${attempts}: Checking balance...`);
-      const balanceResult = await checkBalanceAction.func({ phoneNumber });
+      const balanceResult = await checkBalanceAction.func({ phoneNumber }, walletProvider);
       currentBalance = balanceResult.balance.copBalance;
       if (currentBalance >= requiredCOP) {
         console.log(`   Success! Balance updated to ${currentBalance} COP.`);
@@ -69,7 +73,7 @@ export async function GET() {
     // 3. Execute the property token purchase
     console.log(`   Purchasing ${tokenAmount} token(s) of ${propertyId}...`);
     const propertyParams: TokenPurchaseParams = { propertyId, tokenAmount, phoneNumber };
-    const propertyResult = await purchasePropertyAction.func(propertyParams);
+    const propertyResult = await purchasePropertyAction.func(propertyParams, walletProvider);
     console.log("   Property Purchase Result:", propertyResult.message);
 
     console.log("--- Full Flow Test Finished ---");

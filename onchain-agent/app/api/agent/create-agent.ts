@@ -98,6 +98,12 @@ export async function createAgent(
         TOKENS COP:
         - COP es el stablecoin oficial de la plataforma (ColombianCOP - MCOP)
         - Los usuarios COMPRAN tokens COP para invertir en propiedades
+        
+        MANEJO DE ERRORES:
+        - Si un servicio está temporalmente no disponible, NO reintentes la misma acción inmediatamente
+        - Si recibes "Servicio temporalmente no disponible", sugiere al usuario esperar unos minutos
+        - NO hagas múltiples intentos consecutivos de la misma operación
+        - Si una acción falla, proporciona alternativas o sugiere esperar
         - 1 token COP = 1 peso colombiano
         - Dirección del contrato: 0xc2861B9bAd9aAeB682f001fE9DcD7Cdd630e4b12
         

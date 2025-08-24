@@ -5,6 +5,42 @@ import { DynamicTool } from "@langchain/core/tools";
  * This bypasses the LangChain-AgentKit integration issues
  */
 
+// Rate limiting cache to prevent loops
+const rateLimitCache = new Map<string, { timestamp: number; count: number }>();
+
+// Simple rate limiting function
+function checkRateLimit(key: string, maxCalls: number = 3, windowMs: number = 60000): boolean {
+  const now = Date.now();
+  const cached = rateLimitCache.get(key);
+  
+  if (!cached || now - cached.timestamp > windowMs) {
+    rateLimitCache.set(key, { timestamp: now, count: 1 });
+    return true;
+  }
+  
+  if (cached.count >= maxCalls) {
+    return false;
+  }
+  
+  cached.count++;
+  return true;
+}
+
+// Clean up old rate limit entries periodically
+function cleanupRateLimitCache() {
+  const now = Date.now();
+  const windowMs = 60000; // 1 minute
+  
+  rateLimitCache.forEach((value, key) => {
+    if (now - value.timestamp > windowMs) {
+      rateLimitCache.delete(key);
+    }
+  });
+}
+
+// Clean up cache every 5 minutes
+setInterval(cleanupRateLimitCache, 5 * 60 * 1000);
+
 // Get the base URL dynamically based on environment
 function getBaseUrl(): string {
   if (typeof window !== 'undefined') {
@@ -25,6 +61,11 @@ export function createCustomTools() {
       description: "Compra tokens COP colombianos (stablecoin) para usar en inversiones inmobiliarias. Usa este tool cuando necesites comprar COP tokens.",
       func: async (input: string) => {
         try {
+          // Rate limiting to prevent loops
+          if (!checkRateLimit('cop_purchase', 5, 60000)) {
+            return "⚠️ Demasiadas solicitudes. Por favor, espera un momento antes de intentar de nuevo.";
+          }
+          
           // Parse the input to get the amount
           const amount = parseInt(input.trim());
           if (isNaN(amount) || amount <= 0) {
@@ -44,6 +85,11 @@ export function createCustomTools() {
 
           const result = await response.json();
           
+          // Check if endpoint is disabled during deployment
+          if (result.skipped) {
+            return "⚠️ Servicio temporalmente no disponible durante el despliegue. Por favor, intenta de nuevo en unos minutos.";
+          }
+          
           if (result.success && result.results?.step4_purchase?.result?.success) {
             const purchase = result.results.step4_purchase.result;
             return `¡Compra exitosa! Se han comprado ${purchase.balance.copAmount} COP tokens. Transacción: ${purchase.transaction.hash}. Balance actual: ${purchase.balance.formattedBalance}`;
@@ -61,6 +107,11 @@ export function createCustomTools() {
       description: "Verifica el saldo de tokens COP del usuario. Usa este tool para verificar el balance actual de COP tokens.",
       func: async (_input: string) => {
         try {
+          // Rate limiting to prevent loops
+          if (!checkRateLimit('cop_balance', 10, 60000)) {
+            return "⚠️ Demasiadas solicitudes. Por favor, espera un momento antes de intentar de nuevo.";
+          }
+          
           // Call our working API endpoint
           const baseUrl = getBaseUrl();
           const response = await fetch(`${baseUrl}/api/test-cop-purchase`, {
@@ -73,6 +124,11 @@ export function createCustomTools() {
           }
 
           const result = await response.json();
+          
+          // Check if endpoint is disabled during deployment
+          if (result.skipped) {
+            return "⚠️ Servicio temporalmente no disponible durante el despliegue. Por favor, intenta de nuevo en unos minutos.";
+          }
           
           if (result.success && result.results?.step5_balance_after?.result?.success) {
             const balance = result.results.step5_balance_after.result.balance;
@@ -91,14 +147,20 @@ export function createCustomTools() {
       description: "Compra tokens de una propiedad tokenizada usando tokens COP del usuario. Usa este tool para comprar tokens de propiedades como MIIA001, MIIA002, MIIA003.",
       func: async (input: string) => {
         try {
+          // Rate limiting to prevent loops
+          if (!checkRateLimit('property_purchase', 5, 60000)) {
+            return "⚠️ Demasiadas solicitudes. Por favor, espera un momento antes de intentar de nuevo.";
+          }
+          
           // Parse the input to get property ID and token amount
           const parts = input.trim().split(' ');
           if (parts.length < 2) {
-            return "Error: Por favor proporciona el ID de la propiedad y la cantidad de tokens. Ejemplo: 'MIIA001 1'";
+            return "Error: Por favor proporciona el ID de la propiedad y la cantidad de tokens. Ejemplo: 'MIIA001 5'";
           }
 
           const propertyId = parts[0].toUpperCase();
           const tokenAmount = parseInt(parts[1]);
+          const phoneNumber = parts[2] || "+573009876543"; // Default phone number if not provided
 
           if (isNaN(tokenAmount) || tokenAmount <= 0) {
             return "Error: Por favor proporciona una cantidad válida de tokens mayor a 0.";
@@ -108,9 +170,10 @@ export function createCustomTools() {
             return "Error: Propiedad no válida. Las propiedades disponibles son: MIIA001, MIIA002, MIIA003.";
           }
 
-          // Call our working API endpoint
+          // Call our working API endpoint with proper parameters
           const baseUrl = getBaseUrl();
-          const response = await fetch(`${baseUrl}/api/test-property-purchase`, {
+          const encodedPhoneNumber = encodeURIComponent(phoneNumber);
+          const response = await fetch(`${baseUrl}/api/test-full-purchase-flow?tokenAmount=${tokenAmount}&propertyId=${propertyId}&phoneNumber=${encodedPhoneNumber}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
           });
@@ -121,11 +184,16 @@ export function createCustomTools() {
 
           const result = await response.json();
           
-          if (result.success && result.results?.success) {
-            const purchase = result.results.purchase;
-            return `¡Compra exitosa! Has comprado ${purchase.tokensPurchased} tokens de ${purchase.propertyName} por ${purchase.formattedTotalCost}. Transacción: ${result.results.transaction.hash}. Porcentaje de propiedad: ${purchase.ownershipPercentage}%`;
+          // Check if endpoint is disabled during deployment
+          if (result.skipped) {
+            return "⚠️ Servicio temporalmente no disponible durante el despliegue. Por favor, intenta de nuevo en unos minutos.";
+          }
+          
+          if (result.success && result.results?.propertyPurchase?.success) {
+            const purchase = result.results.propertyPurchase.purchase;
+            return `¡Compra exitosa! Has comprado ${purchase.tokensPurchased} tokens de ${purchase.propertyName} por ${purchase.formattedTotalCost}. Transacción: ${result.results.propertyPurchase.transaction.hash}. Porcentaje de propiedad: ${purchase.ownershipPercentage}`;
           } else {
-            return `Error en la compra: ${result.results?.message || 'Error desconocido'}`;
+            return `Error en la compra: ${result.results?.propertyPurchase?.message || result.error || 'Error desconocido'}`;
           }
         } catch (error) {
           return `Error ejecutando la compra de tokens de propiedad: ${error instanceof Error ? error.message : 'Error desconocido'}`;
